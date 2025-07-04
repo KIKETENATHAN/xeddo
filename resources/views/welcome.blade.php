@@ -3,8 +3,400 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Xeddo Travel link</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        :root {
+            --primary-navy: #1e3a8a;
+            --primary-navy-dark: #1e40af;
+            --secondary-gold: #f59e0b;
+            --secondary-gold-dark: #d97706;
+            --accent-gold: #fbbf24;
+            --gradient-navy: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .bg-primary { background-color: var(--primary-navy); }
+        .bg-primary-dark { background-color: var(--primary-navy-dark); }
+        .bg-secondary { background-color: var(--secondary-gold); }
+        .bg-secondary-dark { background-color: var(--secondary-gold-dark); }
+        .text-primary { color: var(--primary-navy); }
+        .text-secondary { color: var(--secondary-gold); }
+        .border-primary { border-color: var(--primary-navy); }
+        .border-secondary { border-color: var(--secondary-gold); }
+
+        .gradient-navy { background: var(--gradient-navy); }
+        .gradient-gold { background: var(--gradient-gold); }
+
+        .btn-primary {
+            background: var(--gradient-navy);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-gold);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: var(--gradient-navy);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem 1rem 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-input {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: #374151;
+            width: 100%;
+        }
+
+        .form-input:focus {
+            border-color: var(--secondary-gold);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+            outline: none;
+        }
+
+        .trip-table {
+            min-width: 600px;
+        }
+
+        .trip-table th,
+        .trip-table td {
+            white-space: nowrap;
+        }
+
+        .trip-table .route-cell {
+            max-width: 120px;
+            white-space: normal;
+        }
+
+        .book-btn {
+            background: var(--gradient-gold);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+            font-size: 0.875rem;
+        }
+
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .book-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-navy);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(30,58,138,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+
+        .feature-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(30, 58, 138, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(30, 58, 138, 0.1);
+            margin: 0 auto 1rem;
+        }
+
+        .icon-container.golden {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Carousel Styles */
+        .carousel-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-slide {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+
+        .carousel-slide.active {
+            display: block;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-nav.prev {
+            left: 1rem;
+        }
+
+        .carousel-nav.next {
+            right: 1rem;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95vw;
+                margin: 1rem;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+            
+            .trip-table {
+                font-size: 0.875rem;
+            }
+            
+            .book-btn {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
     <div class="min-h-screen flex flex-col">
@@ -86,9 +478,9 @@
                         Your premium ride-sharing platform connecting passengers with professional drivers across the city
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in stagger-2">
-                        <a href="{{ route('register.passenger') }}" class="btn-primary text-lg px-8 py-4 floating-animation">
+                        <button onclick="openBookingModal()" class="btn-primary text-lg px-8 py-4 floating-animation">
                             Book Your Ride
-                        </a>
+                        </button>
                         <a href="{{ route('register.driver') }}" class="btn-secondary text-lg px-8 py-4 floating-animation" style="animation-delay: 0.5s;">
                             Become a Driver
                         </a>
@@ -203,9 +595,9 @@
                                         Multiple payment options available
                                     </li>
                                 </ul>
-                                <a href="{{ route('register.passenger') }}" class="btn-primary w-full text-center block">
+                                <button onclick="openBookingModal()" class="btn-primary w-full text-center block">
                                     Get Started as Passenger
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -345,11 +737,312 @@
         </footer>
     </div>
 
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-2xl font-bold">Find Your Ride</h2>
+                <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Form -->
+                <form id="searchForm" class="space-y-6 mb-8">
+                    <div>
+                        <label for="modal-sacco" class="block text-sm font-semibold text-primary mb-2">Select SACCO</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <select id="modal-sacco" name="sacco_id" class="form-input pl-10" required>
+                                <option value="">Choose a SACCO</option>
+                                <!-- SACCOs will be populated via JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="modal-pickup" class="block text-sm font-semibold text-primary mb-2">Pickup Location</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" id="modal-pickup" name="pickup" class="form-input pl-10" placeholder="Enter pickup location" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="modal-destination" class="block text-sm font-semibold text-primary mb-2">Destination</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" id="modal-destination" name="destination" class="form-input pl-10" placeholder="Enter destination" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-secondary w-full">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Find Available Rides
+                    </button>
+                </form>
+
+                <!-- Loading indicator -->
+                <div id="loadingIndicator" class="loading">
+                    <div class="spinner"></div>
+                    <p class="text-gray-600">Searching for available rides...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div id="searchResults" style="display: none;">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-primary mb-2">Available Rides</h3>
+                        <p id="resultsCount" class="text-gray-600"></p>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="trip-table w-full">
+                            <thead>
+                                <tr class="bg-gray-50 border-b">
+                                    <th class="text-left py-3 px-4 font-semibold text-primary">Driver</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-primary">SACCO</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-primary route-cell">Route</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-primary">Departure</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-primary">Price</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-primary">Seats</th>
+                                    <th class="text-right py-3 px-4 font-semibold text-primary">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                                <!-- Results will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-600 mb-4">Ready to book? Create an account to proceed with your booking.</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="{{ route('register.passenger') }}" class="btn-primary">
+                                Register as Passenger
+                            </a>
+                            <a href="{{ route('login') }}" class="btn-secondary">
+                                Already have an account? Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Results -->
+                <div id="noResults" style="display: none;">
+                    <div class="text-center py-8">
+                        <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary mb-2">No Rides Found</h3>
+                        <p class="text-gray-600 mb-4">Sorry, no rides match your search criteria. Try adjusting your pickup location or destination.</p>
+                        <button onclick="resetSearch()" class="btn-primary">
+                            Try Another Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
+        });
+
+        // Modal functionality
+        function openBookingModal() {
+            document.getElementById('bookingModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            loadSaccos();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            resetSearch();
+        }
+
+        function resetSearch() {
+            document.getElementById('searchForm').reset();
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('noResults').style.display = 'none';
+            document.getElementById('loadingIndicator').classList.remove('active');
+        }
+
+        // Load SACCOs for the modal
+        async function loadSaccos() {
+            try {
+                const response = await fetch('/api/saccos');
+                const saccos = await response.json();
+                
+                const select = document.getElementById('modal-sacco');
+                select.innerHTML = '<option value="">Choose a SACCO</option>';
+                
+                saccos.forEach(sacco => {
+                    const option = document.createElement('option');
+                    option.value = sacco.id;
+                    option.textContent = `${sacco.name} - ${sacco.full_route}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading SACCOs:', error);
+            }
+        }
+
+        // Handle search form submission
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const searchData = {
+                sacco_id: formData.get('sacco_id'),
+                pickup: formData.get('pickup'),
+                destination: formData.get('destination')
+            };
+
+            // Show loading indicator
+            document.getElementById('loadingIndicator').classList.add('active');
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('noResults').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/search-rides', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(searchData)
+                });
+
+                const result = await response.json();
+                
+                // Hide loading indicator
+                document.getElementById('loadingIndicator').classList.remove('active');
+
+                if (result.success && result.trips.length > 0) {
+                    displayResults(result.trips);
+                } else {
+                    document.getElementById('noResults').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error searching rides:', error);
+                document.getElementById('loadingIndicator').classList.remove('active');
+                document.getElementById('noResults').style.display = 'block';
+            }
+        });
+
+        // Display search results
+        function displayResults(trips) {
+            const resultsCount = document.getElementById('resultsCount');
+            const tableBody = document.getElementById('resultsTableBody');
+            
+            resultsCount.textContent = `${trips.length} ride(s) found matching your search`;
+            
+            tableBody.innerHTML = '';
+            
+            trips.forEach(trip => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50 transition-colors';
+                
+                const departureDate = new Date(trip.departure_time);
+                const formattedDate = departureDate.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+                const formattedTime = departureDate.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                
+                row.innerHTML = `
+                    <td class="py-4 px-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-navy rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-medium text-primary">${trip.driver.user.name}</div>
+                                <div class="text-sm text-gray-600">${trip.driver.license_number}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="text-sm font-medium text-primary">${trip.sacco.name}</div>
+                        <div class="text-xs text-gray-600">${trip.sacco.route}</div>
+                    </td>
+                    <td class="py-4 px-4 route-cell">
+                        <div class="text-sm">
+                            <div class="font-medium text-gray-900">${trip.from_location}</div>
+                            <div class="text-gray-600 text-xs">to</div>
+                            <div class="font-medium text-gray-900">${trip.to_location}</div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="text-sm">
+                            <div class="font-medium text-gray-900">${formattedDate}</div>
+                            <div class="text-gray-600">${formattedTime}</div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="text-lg font-bold text-secondary">${trip.formatted_amount}</div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="text-sm">
+                            <div class="font-medium text-gray-900">${trip.remaining_seats} available</div>
+                            <div class="text-gray-600 text-xs">of ${trip.available_seats} total</div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 text-right">
+                        <button onclick="showRegisterPrompt()" class="book-btn">
+                            Book Now
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            document.getElementById('searchResults').style.display = 'block';
+        }
+
+        // Show register prompt when user tries to book
+        function showRegisterPrompt() {
+            if (confirm('You need to register as a passenger to book a ride. Would you like to register now?')) {
+                window.location.href = '{{ route("register.passenger") }}';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBookingModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('bookingModal').classList.contains('active')) {
+                closeBookingModal();
+            }
         });
 
         // Carousel functionality

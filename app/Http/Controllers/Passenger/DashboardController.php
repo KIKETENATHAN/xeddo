@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Passenger;
 use App\Http\Controllers\Controller;
 use App\Models\PassengerProfile;
 use App\Models\Sacco;
+use App\Models\Trip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,5 +45,74 @@ class DashboardController extends Controller
         );
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
+    }
+
+    public function searchRides(Request $request)
+    {
+        $request->validate([
+            'sacco_id' => 'required|exists:saccos,id',
+            'pickup' => 'required|string|max:255',
+            'destination' => 'required|string|max:255',
+        ]);
+
+        $user = Auth::user();
+        $passengerProfile = $user->passengerProfile;
+        
+        if (!$passengerProfile) {
+            $passengerProfile = $user->passengerProfile()->create([]);
+        }
+
+        $stats = [
+            'total_trips' => $passengerProfile->total_trips,
+            'rating' => $passengerProfile->rating,
+        ];
+
+        // Get active SACCOs for booking
+        $saccos = Sacco::where('is_active', true)->get();
+
+        // Search for available trips
+        $trips = Trip::with(['driver.user', 'sacco'])
+            ->where('sacco_id', $request->sacco_id)
+            ->where('status', 'scheduled')
+            ->where('available_seats', '>', 0)
+            ->where(function ($query) use ($request) {
+                $query->where('from_location', 'LIKE', '%' . $request->pickup . '%')
+                      ->orWhere('from_location', 'LIKE', '%' . strtolower($request->pickup) . '%');
+            })
+            ->where(function ($query) use ($request) {
+                $query->where('to_location', 'LIKE', '%' . $request->destination . '%')
+                      ->orWhere('to_location', 'LIKE', '%' . strtolower($request->destination) . '%');
+            })
+            ->where('departure_time', '>', now())
+            ->orderBy('departure_time')
+            ->get();
+
+        // Keep search parameters for the form
+        $searchParams = [
+            'sacco_id' => $request->sacco_id,
+            'pickup' => $request->pickup,
+            'destination' => $request->destination,
+        ];
+
+        return view('passenger.dashboard', compact('passengerProfile', 'stats', 'saccos', 'trips', 'searchParams'));
+    }
+
+    public function bookRide(Request $request, Trip $trip)
+    {
+        // Check if trip is still available
+        if ($trip->status !== 'scheduled' || $trip->remaining_seats <= 0) {
+            return redirect()->back()->with('error', 'This trip is no longer available for booking.');
+        }
+
+        // Check if trip is in the future
+        if ($trip->departure_time <= now()) {
+            return redirect()->back()->with('error', 'Cannot book a trip that has already departed.');
+        }
+
+        // For now, just increment booked seats
+        // In a real application, you would create a booking record
+        $trip->increment('booked_seats');
+
+        return redirect()->back()->with('success', 'Ride booked successfully! You will receive confirmation details soon.');
     }
 }

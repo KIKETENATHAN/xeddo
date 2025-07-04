@@ -210,6 +210,55 @@
             min-height: 200vh;
             background: linear-gradient(to bottom, transparent, rgba(255,0,0,0.1));
         }
+
+        .trip-table {
+            min-width: 800px;
+        }
+
+        .trip-table th,
+        .trip-table td {
+            white-space: nowrap;
+        }
+
+        .trip-table .route-cell {
+            max-width: 150px;
+            white-space: normal;
+        }
+
+        .book-btn {
+            background: var(--gradient-gold);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+            font-size: 0.875rem;
+        }
+
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .book-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .trip-table {
+                font-size: 0.875rem;
+            }
+            
+            .book-btn {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body class="hero-section">
@@ -288,6 +337,33 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="mb-6 bg-red-500 text-white p-4 rounded-lg shadow-lg fade-in">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        {{ session('error') }}
+                    </div>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-6 bg-red-500 text-white p-4 rounded-lg shadow-lg fade-in">
+                    <div class="flex items-center mb-2">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        Please fix the following errors:
+                    </div>
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <!-- Welcome Section -->
             <div class="text-center mb-8 fade-in">
                 <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">
@@ -349,7 +425,8 @@
                                 <h3 class="text-2xl font-bold text-primary mb-2">Book Your Next Ride</h3>
                                 <p class="text-gray-600">Enter your pickup and destination to find available drivers</p>
                             </div>
-                            <form class="space-y-6">
+                            <form method="POST" action="{{ route('passenger.search.rides') }}" class="space-y-6">
+                                @csrf
                                 <div>
                                     <label for="sacco" class="block text-sm font-semibold text-primary mb-2">Select SACCO</label>
                                     <div class="relative">
@@ -361,7 +438,9 @@
                                         <select id="sacco" name="sacco_id" class="form-input pl-10" required>
                                             <option value="">Choose a SACCO</option>
                                             @foreach($saccos as $sacco)
-                                                <option value="{{ $sacco->id }}">{{ $sacco->name }} - {{ $sacco->full_route }}</option>
+                                                <option value="{{ $sacco->id }}" {{ (old('sacco_id', $searchParams['sacco_id'] ?? '') == $sacco->id) ? 'selected' : '' }}>
+                                                    {{ $sacco->name }} - {{ $sacco->full_route }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -375,7 +454,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
                                         </div>
-                                        <input type="text" id="pickup" class="form-input w-full pl-10" placeholder="Enter pickup location" required>
+                                        <input type="text" id="pickup" name="pickup" value="{{ old('pickup', $searchParams['pickup'] ?? '') }}" class="form-input w-full pl-10" placeholder="Enter pickup location" required>
                                     </div>
                                 </div>
                                 <div>
@@ -386,7 +465,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
                                             </svg>
                                         </div>
-                                        <input type="text" id="destination" class="form-input w-full pl-10" placeholder="Enter destination" required>
+                                        <input type="text" id="destination" name="destination" value="{{ old('destination', $searchParams['destination'] ?? '') }}" class="form-input w-full pl-10" placeholder="Enter destination" required>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn-secondary">
@@ -398,6 +477,104 @@
                             </form>
                         </div>
                     </div>
+
+                    <!-- Search Results -->
+                    @if(isset($trips) && $trips->count() > 0)
+                        <div class="dashboard-card fade-in stagger-3">
+                            <div class="p-8">
+                                <div class="text-center mb-6">
+                                    <div class="gradient-gold rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-primary mb-2">Available Rides</h3>
+                                    <p class="text-gray-600">{{ $trips->count() }} ride(s) found matching your search</p>
+                                </div>
+                                
+                                <div class="overflow-x-auto">
+                                    <table class="trip-table w-full">
+                                        <thead>
+                                            <tr class="bg-gray-50 border-b">
+                                                <th class="text-left py-3 px-4 font-semibold text-primary">Driver</th>
+                                                <th class="text-left py-3 px-4 font-semibold text-primary">SACCO</th>
+                                                <th class="text-left py-3 px-4 font-semibold text-primary route-cell">Route</th>
+                                                <th class="text-left py-3 px-4 font-semibold text-primary">Departure</th>
+                                                <th class="text-left py-3 px-4 font-semibold text-primary">Price</th>
+                                                <th class="text-left py-3 px-4 font-semibold text-primary">Seats</th>
+                                                <th class="text-right py-3 px-4 font-semibold text-primary">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($trips as $trip)
+                                                <tr class="border-b hover:bg-gray-50 transition-colors">
+                                                    <td class="py-4 px-4">
+                                                        <div class="flex items-center">
+                                                            <div class="w-10 h-10 bg-gradient-navy rounded-full flex items-center justify-center mr-3">
+                                                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                                </svg>
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-medium text-primary">{{ $trip->driver->user->name }}</div>
+                                                                <div class="text-sm text-gray-600">{{ $trip->driver->license_number }}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 px-4">
+                                                        <div class="text-sm font-medium text-primary">{{ $trip->sacco->name }}</div>
+                                                        <div class="text-xs text-gray-600">{{ $trip->sacco->route }}</div>
+                                                    </td>
+                                                    <td class="py-4 px-4 route-cell">
+                                                        <div class="text-sm">
+                                                            <div class="font-medium text-gray-900">{{ $trip->from_location }}</div>
+                                                            <div class="text-gray-600 text-xs">to</div>
+                                                            <div class="font-medium text-gray-900">{{ $trip->to_location }}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 px-4">
+                                                        <div class="text-sm">
+                                                            <div class="font-medium text-gray-900">{{ $trip->departure_time->format('M j, Y') }}</div>
+                                                            <div class="text-gray-600">{{ $trip->departure_time->format('g:i A') }}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 px-4">
+                                                        <div class="text-lg font-bold text-secondary">{{ $trip->formatted_amount }}</div>
+                                                    </td>
+                                                    <td class="py-4 px-4">
+                                                        <div class="text-sm">
+                                                            <div class="font-medium text-gray-900">{{ $trip->remaining_seats }} available</div>
+                                                            <div class="text-gray-600 text-xs">of {{ $trip->available_seats }} total</div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 px-4 text-right">
+                                                        <form method="POST" action="{{ route('passenger.book.ride', $trip) }}" class="inline">
+                                                            @csrf
+                                                            <button type="submit" class="book-btn">
+                                                                Book Now
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif(isset($trips) && $trips->count() == 0)
+                        <div class="dashboard-card fade-in stagger-3">
+                            <div class="p-8 text-center">
+                                <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-bold text-primary mb-2">No Rides Found</h3>
+                                <p class="text-gray-600">Sorry, no rides match your search criteria. Try adjusting your pickup location or destination.</p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Profile Section -->
