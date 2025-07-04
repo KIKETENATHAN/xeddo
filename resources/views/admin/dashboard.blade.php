@@ -6,6 +6,19 @@
     <title>Admin Dashboard - Xeddo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            height: auto;
+            min-height: 100vh;
+        }
+        
         :root {
             --primary-navy: #1e3a8a;
             --primary-navy-dark: #1e40af;
@@ -177,7 +190,8 @@
         .hero-section {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
         .hero-section::before {
@@ -267,8 +281,8 @@
         }
     </style>
 </head>
-<body class="hero-section min-h-screen">
-    <div class="min-h-screen relative z-10">
+<body class="hero-section">
+    <div class="relative z-10">
         <!-- Navigation -->
         <nav class="admin-header shadow-lg sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -409,7 +423,7 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-in stagger-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 fade-in stagger-2">
                 <div class="action-card">
                     <div class="p-8">
                         <div class="text-center mb-6">
@@ -447,6 +461,26 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             Manage Drivers
+                        </a>
+                    </div>
+                </div>
+
+                <div class="action-card">
+                    <div class="p-8">
+                        <div class="text-center mb-6">
+                            <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary mb-2">Manage SACCOs</h3>
+                            <p class="text-gray-600">Add and manage transportation cooperatives</p>
+                        </div>
+                        <a href="{{ route('admin.saccos.index') }}" class="btn-secondary w-full">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            Manage SACCOs
                         </a>
                     </div>
                 </div>

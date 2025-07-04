@@ -549,10 +549,20 @@
                                 <h4 class="text-sm font-semibold text-primary mb-1">License Number</h4>
                                 <p class="text-lg font-medium text-gray-800">{{ $driverProfile->license_number }}</p>
                             </div>
-                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                                <h4 class="text-sm font-semibold text-primary mb-1">License Expiry</h4>
-                                <p class="text-lg font-medium text-gray-800">{{ $driverProfile->license_expiry->format('M d, Y') }}</p>
-                            </div>
+                            @if($driverProfile->license_expiry)
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <h4 class="text-sm font-semibold text-primary mb-1">License Expiry</h4>
+                                    <p class="text-lg font-medium text-gray-800">{{ $driverProfile->license_expiry->format('M d, Y') }}</p>
+                                </div>
+                            @endif
+                            
+                            @if($driverProfile->sacco)
+                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                    <h4 class="text-sm font-semibold text-primary mb-1">SACCO</h4>
+                                    <p class="text-lg font-medium text-gray-800">{{ $driverProfile->sacco->name }}</p>
+                                    <p class="text-sm text-gray-600 mt-1">{{ $driverProfile->sacco->full_route }}</p>
+                                </div>
+                            @endif
                             
                             @if($stats['status'] === 'pending')
                                 <div class="alert-warning">

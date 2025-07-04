@@ -351,6 +351,22 @@
                             </div>
                             <form class="space-y-6">
                                 <div>
+                                    <label for="sacco" class="block text-sm font-semibold text-primary mb-2">Select SACCO</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                            </svg>
+                                        </div>
+                                        <select id="sacco" name="sacco_id" class="form-input pl-10" required>
+                                            <option value="">Choose a SACCO</option>
+                                            @foreach($saccos as $sacco)
+                                                <option value="{{ $sacco->id }}">{{ $sacco->name }} - {{ $sacco->full_route }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
                                     <label for="pickup" class="block text-sm font-semibold text-primary mb-2">Pickup Location</label>
                                     <div class="relative">
                                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -359,7 +375,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
                                         </div>
-                                        <input type="text" id="pickup" class="form-input w-full pl-10" placeholder="Enter pickup location">
+                                        <input type="text" id="pickup" class="form-input w-full pl-10" placeholder="Enter pickup location" required>
                                     </div>
                                 </div>
                                 <div>
@@ -370,7 +386,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
                                             </svg>
                                         </div>
-                                        <input type="text" id="destination" class="form-input w-full pl-10" placeholder="Enter destination">
+                                        <input type="text" id="destination" class="form-input w-full pl-10" placeholder="Enter destination" required>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn-secondary">

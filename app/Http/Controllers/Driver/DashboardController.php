@@ -18,6 +18,9 @@ class DashboardController extends Controller
             return redirect()->route('driver.profile.create');
         }
 
+        // Load the SACCO relationship
+        $driverProfile->load('sacco');
+
         $stats = [
             'total_trips' => $driverProfile->total_trips,
             'rating' => $driverProfile->rating,

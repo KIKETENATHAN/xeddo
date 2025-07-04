@@ -24,6 +24,7 @@ class DriverProfile extends Model
         'is_available',
         'rating',
         'total_trips',
+        'sacco_id',
     ];
 
     protected $casts = [
@@ -38,5 +39,13 @@ class DriverProfile extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the SACCO that this driver belongs to.
+     */
+    public function sacco()
+    {
+        return $this->belongsTo(Sacco::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Passenger;
 
 use App\Http\Controllers\Controller;
 use App\Models\PassengerProfile;
+use App\Models\Sacco;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +24,10 @@ class DashboardController extends Controller
             'rating' => $passengerProfile->rating,
         ];
 
-        return view('passenger.dashboard', compact('passengerProfile', 'stats'));
+        // Get active SACCOs for booking
+        $saccos = Sacco::where('is_active', true)->get();
+
+        return view('passenger.dashboard', compact('passengerProfile', 'stats', 'saccos'));
     }
 
     public function updateProfile(Request $request)

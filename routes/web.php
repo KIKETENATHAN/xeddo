@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\SaccoController;
 use App\Http\Controllers\Driver\DashboardController as DriverDashboardController;
 use App\Http\Controllers\Passenger\DashboardController as PassengerDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/drivers', [AdminDashboardController::class, 'manageDrivers'])->name('drivers.index');
     Route::patch('/drivers/{driver}/approve', [AdminDashboardController::class, 'approveDriver'])->name('drivers.approve');
     Route::patch('/drivers/{driver}/reject', [AdminDashboardController::class, 'rejectDriver'])->name('drivers.reject');
+    
+    // SACCO management routes
+    Route::resource('saccos', SaccoController::class);
 });
 
 // Driver routes
