@@ -5,19 +5,320 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Driver Dashboard - Xeddo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            height: auto;
+            min-height: 100vh;
+        }
+        
+        :root {
+            --primary-navy: #1e3a8a;
+            --primary-navy-dark: #1e40af;
+            --secondary-gold: #f59e0b;
+            --secondary-gold-dark: #d97706;
+            --accent-gold: #fbbf24;
+            --gradient-navy: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .bg-primary { background-color: var(--primary-navy); }
+        .bg-primary-dark { background-color: var(--primary-navy-dark); }
+        .bg-secondary { background-color: var(--secondary-gold); }
+        .bg-secondary-dark { background-color: var(--secondary-gold-dark); }
+        .text-primary { color: var(--primary-navy); }
+        .text-secondary { color: var(--secondary-gold); }
+        .border-primary { border-color: var(--primary-navy); }
+        .border-secondary { border-color: var(--secondary-gold); }
+
+        .gradient-navy { background: var(--gradient-navy); }
+        .gradient-gold { background: var(--gradient-gold); }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(30, 58, 138, 0.1);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card {
+            background: var(--gradient-navy);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 50px rgba(30, 58, 138, 0.4);
+        }
+
+        .stat-card.approved {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .stat-card.pending {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .stat-card.rejected {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .btn-primary {
+            background: var(--gradient-navy);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+            text-align: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-gold);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            text-align: center;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-available {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-available:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-unavailable {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-unavailable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+        }
+
+        .icon-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(245, 158, 11, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(30,58,138,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+
+        .success-alert {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            border: none;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-approved {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .status-rejected {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .vehicle-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vehicle-info-item {
+            background: rgba(30, 58, 138, 0.05);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-info-item:hover {
+            background: rgba(30, 58, 138, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Debug scrolling */
+        .hero-section {
+            min-height: 100vh;
+        }
+        
+        .debug-height {
+            min-height: 200vh;
+            background: linear-gradient(to bottom, transparent, rgba(255,0,0,0.1));
+        }
+    </style>
 </head>
-<body class="bg-white">
-    <div class="min-h-screen">
+<body class="hero-section">
+    <div class="relative z-10">
         <!-- Navigation -->
-        <nav class="bg-white shadow-sm">
+        <nav class="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-blue-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <h1 class="text-xl font-semibold text-primary">Driver Dashboard</h1>
+                        <div class="gradient-navy rounded-lg p-2 mr-3">
+                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-bold text-primary">Driver Dashboard</h1>
                     </div>
                     <!-- Mobile menu button -->
                     <div class="md:hidden">
-                        <button id="mobile-menu-button" class="text-primary hover:text-accent focus:outline-none">
+                        <button id="mobile-menu-button" class="text-primary hover:text-primary-dark p-2 rounded-lg hover:bg-blue-50 transition-colors">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
@@ -25,24 +326,36 @@
                     </div>
                     <!-- Desktop menu -->
                     <div class="hidden md:flex items-center space-x-4">
-                        <span class="text-gray-700">Welcome, {{ auth()->user()->name }}</span>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-gradient-gold rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-primary font-medium">Welcome, {{ auth()->user()->name }}</span>
+                        </div>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="text-gray-500 hover:text-accent">
+                            <button type="submit" class="text-primary hover:text-primary-dark px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium">
                                 Logout
                             </button>
                         </form>
                     </div>
                 </div>
                 <!-- Mobile menu -->
-                <div id="mobile-menu" class="md:hidden hidden">
-                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
-                        <div class="block px-3 py-2 rounded-md text-base font-medium text-gray-700">
-                            Welcome, {{ auth()->user()->name }}
+                <div id="mobile-menu" class="md:hidden hidden border-t border-blue-100 bg-white/95 backdrop-blur-md">
+                    <div class="px-2 pt-2 pb-3 space-y-1">
+                        <div class="flex items-center space-x-3 px-3 py-2">
+                            <div class="w-8 h-8 bg-gradient-gold rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-primary font-medium">Welcome, {{ auth()->user()->name }}</span>
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="block">
                             @csrf
-                            <button type="submit" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-accent">
+                            <button type="submit" class="w-full text-left px-3 py-2 rounded-lg text-primary hover:bg-blue-50 transition-colors font-medium">
                                 Logout
                             </button>
                         </form>
@@ -52,76 +365,91 @@
         </nav>
 
         <!-- Main Content -->
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 relative z-10 debug-height">
             @if(session('success'))
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                    {{ session('success') }}
+                <div class="mb-6 success-alert fade-in">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        {{ session('success') }}
+                    </div>
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Stats Cards -->
-                <div class="lg:col-span-2">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div class="bg-primary overflow-hidden shadow rounded-lg">
-                            <div class="p-5">
+            <!-- Welcome Section -->
+            <div class="text-center mb-8 fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-4">
+                    Welcome Back, <span class="text-secondary">{{ auth()->user()->name }}</span>
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Ready to start earning? Manage your availability and track your performance below.
+                </p>
+                <div class="mt-4">
+                    <span class="status-badge status-{{ $stats['status'] }}">
+                        {{ ucfirst($stats['status']) }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Stats and Controls -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Statistics -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 fade-in stagger-1">
+                        <div class="stat-card floating-animation">
+                            <div class="p-6 relative z-10">
                                 <div class="flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="icon-container">
+                                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                         </svg>
                                     </div>
-                                    <div class="ml-5 w-0 flex-1">
-                                        <dl>
-                                            <dt class="text-sm font-medium text-gray-300 truncate">Total Trips</dt>
-                                            <dd class="text-lg font-medium text-white">{{ $stats['total_trips'] }}</dd>
-                                        </dl>
+                                    <div class="ml-4">
+                                        <h3 class="text-sm font-medium text-blue-200">Total Trips</h3>
+                                        <p class="text-3xl font-bold text-white">{{ $stats['total_trips'] }}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-primary overflow-hidden shadow rounded-lg">
-                            <div class="p-5">
+                        <div class="stat-card floating-animation" style="animation-delay: 0.2s;">
+                            <div class="p-6 relative z-10">
                                 <div class="flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <svg class="h-6 w-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="icon-container">
+                                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
                                         </svg>
                                     </div>
-                                    <div class="ml-5 w-0 flex-1">
-                                        <dl>
-                                            <dt class="text-sm font-medium text-gray-300 truncate">Rating</dt>
-                                            <dd class="text-lg font-medium text-white">{{ number_format($stats['rating'], 1) }}/5.0</dd>
-                                        </dl>
+                                    <div class="ml-4">
+                                        <h3 class="text-sm font-medium text-blue-200">Your Rating</h3>
+                                        <p class="text-3xl font-bold text-white">{{ number_format($stats['rating'], 1) }}/5.0</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bg-primary overflow-hidden shadow rounded-lg">
-                            <div class="p-5">
+                        <div class="stat-card {{ $stats['status'] }} floating-animation" style="animation-delay: 0.4s;">
+                            <div class="p-6 relative z-10">
                                 <div class="flex items-center">
-                                    <div class="flex-shrink-0">
+                                    <div class="icon-container">
                                         @if($stats['status'] === 'approved')
-                                            <svg class="h-6 w-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                         @elseif($stats['status'] === 'pending')
-                                            <svg class="h-6 w-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                         @else
-                                            <svg class="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                         @endif
                                     </div>
-                                    <div class="ml-5 w-0 flex-1">
-                                        <dl>
-                                            <dt class="text-sm font-medium text-gray-300 truncate">Status</dt>
-                                            <dd class="text-lg font-medium text-white capitalize">{{ $stats['status'] }}</dd>
-                                        </dl>
+                                    <div class="ml-4">
+                                        <h3 class="text-sm font-medium text-white opacity-90">Account Status</h3>
+                                        <p class="text-3xl font-bold text-white capitalize">{{ $stats['status'] }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -130,94 +458,211 @@
 
                     <!-- Availability Toggle -->
                     @if($stats['status'] === 'approved')
-                        <div class="bg-primary overflow-hidden shadow rounded-lg mb-6">
-                            <div class="p-6">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <h3 class="text-lg font-medium text-white">Availability Status</h3>
-                                        <p class="text-sm text-gray-300">Toggle your availability to receive ride requests</p>
+                        <div class="dashboard-card fade-in stagger-2">
+                            <div class="p-8">
+                                <div class="text-center mb-6">
+                                    <div class="gradient-gold rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
                                     </div>
+                                    <h3 class="text-2xl font-bold text-primary mb-2">Availability Control</h3>
+                                    <p class="text-gray-600">Toggle your availability to start receiving ride requests</p>
+                                </div>
+                                <div class="text-center">
                                     <form method="POST" action="{{ route('driver.toggle.availability') }}">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white {{ $stats['is_available'] ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 hover:bg-gray-700' }}">
-                                            {{ $stats['is_available'] ? 'Available' : 'Unavailable' }}
+                                        <button type="submit" class="{{ $stats['is_available'] ? 'btn-available' : 'btn-unavailable' }} px-8 py-4 text-lg">
+                                            <svg class="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                @if($stats['is_available'])
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                @else
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                @endif
+                                            </svg>
+                                            {{ $stats['is_available'] ? 'Currently Available' : 'Currently Unavailable' }}
                                         </button>
                                     </form>
+                                    <p class="text-sm text-gray-500 mt-3">
+                                        {{ $stats['is_available'] ? 'You are ready to receive ride requests' : 'You will not receive ride requests while unavailable' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     @endif
 
                     <!-- Vehicle Information -->
-                    <div class="bg-primary overflow-hidden shadow rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-medium text-white mb-4">Vehicle Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-300">Vehicle</p>
-                                    <p class="text-lg font-medium text-white">{{ $driverProfile->vehicle_year }} {{ $driverProfile->vehicle_make }} {{ $driverProfile->vehicle_model }}</p>
+                    <div class="dashboard-card fade-in stagger-3">
+                        <div class="p-8">
+                            <div class="text-center mb-6">
+                                <div class="gradient-navy rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-300">Plate Number</p>
-                                    <p class="text-lg font-medium text-white">{{ $driverProfile->vehicle_plate_number }}</p>
+                                <h3 class="text-2xl font-bold text-primary mb-2">Vehicle Information</h3>
+                                <p class="text-gray-600">Your registered vehicle details</p>
+                            </div>
+                            <div class="vehicle-info-grid">
+                                <div class="vehicle-info-item">
+                                    <h4 class="text-sm font-semibold text-primary mb-1">Vehicle</h4>
+                                    <p class="text-lg font-medium text-gray-800">{{ $driverProfile->vehicle_year }} {{ $driverProfile->vehicle_make }} {{ $driverProfile->vehicle_model }}</p>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-300">Color</p>
-                                    <p class="text-lg font-medium text-white">{{ $driverProfile->vehicle_color }}</p>
+                                <div class="vehicle-info-item">
+                                    <h4 class="text-sm font-semibold text-primary mb-1">Plate Number</h4>
+                                    <p class="text-lg font-medium text-gray-800">{{ $driverProfile->vehicle_plate_number }}</p>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-300">Type</p>
-                                    <p class="text-lg font-medium text-white">{{ $driverProfile->vehicle_type }}</p>
+                                <div class="vehicle-info-item">
+                                    <h4 class="text-sm font-semibold text-primary mb-1">Color</h4>
+                                    <p class="text-lg font-medium text-gray-800">{{ $driverProfile->vehicle_color }}</p>
+                                </div>
+                                <div class="vehicle-info-item">
+                                    <h4 class="text-sm font-semibold text-primary mb-1">Type</h4>
+                                    <p class="text-lg font-medium text-gray-800">{{ $driverProfile->vehicle_type }}</p>
                                 </div>
                             </div>
+                            @if($driverProfile->vehicle_description)
+                                <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                    <h4 class="text-sm font-semibold text-primary mb-2">Vehicle Description</h4>
+                                    <p class="text-gray-700">{{ $driverProfile->vehicle_description }}</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
 
                 <!-- Profile Section -->
-                <div class="bg-primary overflow-hidden shadow rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-medium text-white mb-4">Driver Profile</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <p class="text-sm text-gray-300">License Number</p>
-                                <p class="text-lg font-medium text-white">{{ $driverProfile->license_number }}</p>
+                <div class="dashboard-card fade-in stagger-4">
+                    <div class="p-8">
+                        <div class="text-center mb-6">
+                            <div class="gradient-navy rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
                             </div>
-                            <div>
-                                <p class="text-sm text-gray-300">License Expiry</p>
-                                <p class="text-lg font-medium text-white">{{ $driverProfile->license_expiry->format('M d, Y') }}</p>
+                            <h3 class="text-2xl font-bold text-primary mb-2">Driver Profile</h3>
+                            <p class="text-gray-600">Your license and certification details</p>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <h4 class="text-sm font-semibold text-primary mb-1">License Number</h4>
+                                <p class="text-lg font-medium text-gray-800">{{ $driverProfile->license_number }}</p>
                             </div>
-                            @if($driverProfile->vehicle_description)
-                                <div>
-                                    <p class="text-sm text-gray-300">Vehicle Description</p>
-                                    <p class="text-lg font-medium text-white">{{ $driverProfile->vehicle_description }}</p>
-                                </div>
-                            @endif
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <h4 class="text-sm font-semibold text-primary mb-1">License Expiry</h4>
+                                <p class="text-lg font-medium text-gray-800">{{ $driverProfile->license_expiry->format('M d, Y') }}</p>
+                            </div>
                             
                             @if($stats['status'] === 'pending')
-                                <div class="mt-4 p-4 bg-yellow-50 rounded-lg">
-                                    <p class="text-sm text-yellow-800">
-                                        Your driver profile is under review. You'll be notified once it's approved.
-                                    </p>
+                                <div class="alert-warning">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Profile Under Review</h4>
+                                            <p class="text-sm">Your driver profile is currently being reviewed by our team. You'll be notified once it's approved and you can start accepting rides.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             @elseif($stats['status'] === 'rejected')
-                                <div class="mt-4 p-4 bg-red-50 rounded-lg">
-                                    <p class="text-sm text-red-800">
-                                        Your driver profile has been rejected. Please contact support for more information.
-                                    </p>
+                                <div class="alert-error">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Profile Rejected</h4>
+                                            <p class="text-sm">Your driver profile has been rejected. Please contact our support team for more information and assistance with resubmission.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 fade-in stagger-4">
+                <div class="dashboard-card text-center p-6 group cursor-pointer">
+                    <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Earnings Report</h4>
+                    <p class="text-gray-600 text-sm">View your daily and weekly earnings</p>
+                </div>
+
+                <div class="dashboard-card text-center p-6 group cursor-pointer">
+                    <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Trip History</h4>
+                    <p class="text-gray-600 text-sm">Review your completed rides</p>
+                </div>
+
+                <div class="dashboard-card text-center p-6 group cursor-pointer">
+                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Driver Support</h4>
+                    <p class="text-gray-600 text-sm">Get help and assistance</p>
+                </div>
+            </div>
         </main>
     </div>
     <script>
+        // Debug scrolling issue
+        console.log('Page height:', document.body.scrollHeight);
+        console.log('Viewport height:', window.innerHeight);
+        console.log('Can scroll:', document.body.scrollHeight > window.innerHeight);
+        
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
+        });
+
+        // Add smooth scrolling and enhanced interactions
+        document.querySelectorAll('.dashboard-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Enhanced availability toggle feedback
+        const availabilityForm = document.querySelector('form[action*="toggle.availability"]');
+        if (availabilityForm) {
+            availabilityForm.addEventListener('submit', function(e) {
+                const button = this.querySelector('button');
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transform = 'scale(1)';
+                }, 150);
+            });
+        }
+        
+        // Add some test content to ensure scrolling works
+        window.addEventListener('load', function() {
+            console.log('Page loaded, checking scroll...');
+            if (document.body.scrollHeight <= window.innerHeight) {
+                console.log('Page too short, adding test content...');
+                const testDiv = document.createElement('div');
+                testDiv.style.height = '100vh';
+                testDiv.style.background = 'rgba(255,0,0,0.1)';
+                testDiv.innerHTML = '<p style="padding: 20px;">Test content to enable scrolling</p>';
+                document.body.appendChild(testDiv);
+            }
         });
     </script>
 </body>
