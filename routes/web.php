@@ -50,6 +50,8 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->g
     Route::get('/dashboard', [DriverDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile/create', [DriverDashboardController::class, 'createProfile'])->name('profile.create');
     Route::post('/profile', [DriverDashboardController::class, 'storeProfile'])->name('profile.store');
+    Route::get('/profile/edit', [DriverDashboardController::class, 'editProfile'])->name('profile.edit');
+    Route::patch('/profile', [DriverDashboardController::class, 'updateProfile'])->name('profile.update');
     Route::patch('/toggle-availability', [DriverDashboardController::class, 'toggleAvailability'])->name('toggle.availability');
 });
 

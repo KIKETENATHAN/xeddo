@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Driver;
 
 use App\Http\Controllers\Controller;
 use App\Models\DriverProfile;
+use App\Models\Sacco;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +34,8 @@ class DashboardController extends Controller
 
     public function createProfile()
     {
-        return view('driver.profile.create');
+        $saccos = Sacco::where('is_active', true)->get();
+        return view('driver.profile.create', compact('saccos'));
     }
 
     public function storeProfile(Request $request)
@@ -48,6 +50,7 @@ class DashboardController extends Controller
             'vehicle_plate_number' => 'required|string|unique:driver_profiles',
             'vehicle_color' => 'required|string',
             'vehicle_description' => 'nullable|string',
+            'sacco_id' => 'nullable|exists:saccos,id'
         ]);
 
         Auth::user()->driverProfile()->create($request->all());
@@ -61,5 +64,35 @@ class DashboardController extends Controller
         $driverProfile->update(['is_available' => !$driverProfile->is_available]);
         
         return redirect()->back()->with('success', 'Availability updated successfully!');
+    }
+
+    public function editProfile()
+    {
+        $driverProfile = Auth::user()->driverProfile;
+        $saccos = Sacco::where('is_active', true)->get();
+        
+        return view('driver.profile.edit', compact('driverProfile', 'saccos'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $driverProfile = Auth::user()->driverProfile;
+        
+        $request->validate([
+            'license_number' => 'required|string|unique:driver_profiles,license_number,' . $driverProfile->id,
+            'license_expiry' => 'required|date|after:today',
+            'vehicle_type' => 'required|string',
+            'vehicle_make' => 'required|string',
+            'vehicle_model' => 'required|string',
+            'vehicle_year' => 'required|integer|min:1980|max:' . (date('Y') + 1),
+            'vehicle_plate_number' => 'required|string|unique:driver_profiles,vehicle_plate_number,' . $driverProfile->id,
+            'vehicle_color' => 'required|string',
+            'vehicle_description' => 'nullable|string',
+            'sacco_id' => 'nullable|exists:saccos,id'
+        ]);
+
+        $driverProfile->update($request->all());
+
+        return redirect()->route('driver.dashboard')->with('success', 'Driver profile updated successfully!');
     }
 }

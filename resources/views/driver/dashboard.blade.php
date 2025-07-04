@@ -543,6 +543,14 @@
                             </div>
                             <h3 class="text-2xl font-bold text-primary mb-2">Driver Profile</h3>
                             <p class="text-gray-600">Your license and certification details</p>
+                            <div class="mt-4">
+                                <a href="{{ route('driver.profile.edit') }}" class="btn-secondary">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                    Edit Profile
+                                </a>
+                            </div>
                         </div>
                         <div class="space-y-6">
                             <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -556,13 +564,73 @@
                                 </div>
                             @endif
                             
-                            @if($driverProfile->sacco)
-                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                                    <h4 class="text-sm font-semibold text-primary mb-1">SACCO</h4>
-                                    <p class="text-lg font-medium text-gray-800">{{ $driverProfile->sacco->name }}</p>
-                                    <p class="text-sm text-gray-600 mt-1">{{ $driverProfile->sacco->full_route }}</p>
+                            <!-- SACCO Information Section -->
+                            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg border-2 border-yellow-200 relative">
+                                <div class="absolute top-2 right-2">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
                                 </div>
-                            @endif
+                                <h4 class="text-lg font-bold text-primary mb-3 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    SACCO Membership
+                                </h4>
+                                @if($driverProfile->sacco)
+                                    <div class="space-y-2">
+                                        <div class="flex items-start justify-between">
+                                            <div>
+                                                <p class="text-xl font-bold text-gray-800">{{ $driverProfile->sacco->name }}</p>
+                                                <p class="text-sm text-gray-600 mt-1">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    </svg>
+                                                    Route: {{ $driverProfile->sacco->full_route }}
+                                                </p>
+                                                <p class="text-sm text-gray-600">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    </svg>
+                                                    Location: {{ $driverProfile->sacco->location }}
+                                                </p>
+                                            </div>
+                                            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                                                Active Member
+                                            </span>
+                                        </div>
+                                        @if($driverProfile->sacco->phone_number)
+                                            <div class="mt-3 p-3 bg-white/50 rounded-lg">
+                                                <p class="text-sm text-gray-600">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                                    </svg>
+                                                    Contact: {{ $driverProfile->sacco->phone_number }}
+                                                </p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="text-center py-4">
+                                        <div class="text-gray-400 mb-2">
+                                            <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                            </svg>
+                                        </div>
+                                        <h5 class="text-lg font-semibold text-gray-600 mb-1">No SACCO Assigned</h5>
+                                        <p class="text-sm text-gray-500 mb-3">Join a SACCO to operate on specific routes and connect with other drivers</p>
+                                        <a href="{{ route('driver.profile.edit') }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-lg hover:bg-yellow-600 transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            Join a SACCO
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
                             
                             @if($stats['status'] === 'pending')
                                 <div class="alert-warning">
