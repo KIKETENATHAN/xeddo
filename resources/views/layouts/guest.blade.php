@@ -65,25 +65,26 @@
 
             .logo-container {
                 background: var(--gradient-navy);
-                border-radius: 1rem;
-                padding: 1rem;
+                border-radius: 0.75rem;
+                padding: 0.75rem;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                margin-bottom: 2rem;
-                box-shadow: 0 10px 25px rgba(30, 58, 138, 0.3);
+                margin-bottom: 1rem;
+                box-shadow: 0 6px 20px rgba(30, 58, 138, 0.25);
             }
 
             .form-input {
                 border: 2px solid #e5e7eb;
-                border-radius: 0.5rem;
-                padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+                border-radius: 0.375rem;
+                padding: 0.375rem 2.25rem 0.375rem 0.75rem;
                 transition: all 0.3s ease;
                 background: white;
                 color: #374151;
                 width: 100%;
-                font-size: 0.875rem;
-                line-height: 1.25rem;
+                font-size: 0.75rem;
+                line-height: 1rem;
+                min-height: 2.25rem;
             }
 
             .form-input:focus {
@@ -95,24 +96,25 @@
             .btn-primary {
                 background: var(--gradient-navy);
                 color: white;
-                padding: 0.5rem 1.5rem;
-                border-radius: 0.5rem;
+                padding: 0.375rem 1.25rem;
+                border-radius: 0.375rem;
                 font-weight: 600;
                 text-decoration: none;
                 display: inline-block;
                 transition: all 0.3s ease;
                 border: none;
                 cursor: pointer;
-                box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+                box-shadow: 0 3px 12px rgba(30, 58, 138, 0.25);
                 width: 100%;
-                font-size: 0.875rem;
+                font-size: 0.75rem;
+                min-height: 2.25rem;
             }
 
             /* Responsive grid for forms */
             .form-grid {
                 display: grid;
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 0.75rem;
             }
             
             @media (min-width: 640px) {
@@ -127,7 +129,20 @@
 
             @media (min-width: 768px) {
                 .form-grid {
-                    gap: 1.5rem;
+                    gap: 1.25rem;
+                }
+                
+                .form-input {
+                    font-size: 0.875rem;
+                    line-height: 1.25rem;
+                    min-height: 2.5rem;
+                    padding: 0.5rem 2.5rem 0.5rem 0.875rem;
+                }
+                
+                .btn-primary {
+                    font-size: 0.875rem;
+                    min-height: 2.5rem;
+                    padding: 0.5rem 1.5rem;
                 }
             }
 
@@ -150,19 +165,19 @@
         </style>
     </head>
     <body class="font-sans text-gray-900 antialiased auth-bg">
-        <div class="min-h-screen flex flex-col justify-center items-center py-2 px-2">
-            <div class="text-center mb-4">
+        <div class="min-h-screen flex flex-col justify-center items-center py-1 px-1">
+            <div class="text-center mb-3">
                 <div class="logo-container">
                     <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
                 </div>
-                <h1 class="text-xl font-bold text-primary mb-1">Xeddo Travel Link</h1>
+                <h1 class="text-lg font-bold text-primary mb-1">Xeddo Travel Link</h1>
                 <p class="text-gray-600 text-xs">Your premium ride-sharing platform</p>
             </div>
 
-            <div class="w-full max-w-2xl auth-card px-4 py-4">
+            <div class="w-full max-w-2xl auth-card px-3 py-3">
                 {{ $slot }}
             </div>
         </div>
