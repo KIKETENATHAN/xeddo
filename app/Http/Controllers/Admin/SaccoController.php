@@ -44,7 +44,7 @@ class SaccoController extends Controller
             ]);
 
             // Handle checkbox separately
-            $validated['is_active'] = $request->has('is_active') ? true : false;
+            $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
             
             // Debug: Log validated data
             \Log::info('SACCO Validated Data:', $validated);
@@ -98,10 +98,11 @@ class SaccoController extends Controller
             'route_from' => 'required|string|max:255',
             'route_to' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'sometimes|boolean'
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        // Handle checkbox: if present, it's checked (true), if not present, it's unchecked (false)
+        $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
 
         $sacco->update($validated);
 

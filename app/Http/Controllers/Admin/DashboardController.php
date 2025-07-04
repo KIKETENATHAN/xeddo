@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\DriverProfile;
 use App\Models\PassengerProfile;
+use App\Models\Sacco;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -17,13 +18,15 @@ class DashboardController extends Controller
         $totalPassengers = User::where('role', 'passenger')->count();
         $pendingDrivers = DriverProfile::where('status', 'pending')->count();
         $activeDrivers = DriverProfile::where('status', 'approved')->where('is_available', true)->count();
+        $totalSaccos = Sacco::count();
 
         return view('admin.dashboard', compact(
             'totalUsers',
             'totalDrivers',
             'totalPassengers',
             'pendingDrivers',
-            'activeDrivers'
+            'activeDrivers',
+            'totalSaccos'
         ));
     }
 

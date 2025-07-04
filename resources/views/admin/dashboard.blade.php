@@ -96,6 +96,10 @@
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
 
+        .stat-card.saccos {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
         .btn-primary {
             background: var(--gradient-navy);
             color: white;
@@ -356,7 +360,7 @@
             </div>
 
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in stagger-1">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 fade-in stagger-1">
                 <div class="stat-card users floating-animation">
                     <div class="p-6 relative z-10">
                         <div class="flex items-center">
@@ -416,6 +420,22 @@
                             <div class="ml-4">
                                 <h3 class="text-sm font-medium text-red-200">Pending Approvals</h3>
                                 <p class="text-3xl font-bold text-white">{{ $pendingDrivers }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card saccos floating-animation" style="animation-delay: 0.8s;">
+                    <div class="p-6 relative z-10">
+                        <div class="flex items-center">
+                            <div class="icon-container">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-sm font-medium text-purple-200">Total SACCOs</h3>
+                                <p class="text-3xl font-bold text-white">{{ $totalSaccos }}</p>
                             </div>
                         </div>
                     </div>

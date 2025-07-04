@@ -248,7 +248,8 @@
                         </div>
 
                         <div class="flex items-center">
-                            <input type="checkbox" id="is_active" name="is_active" class="form-checkbox h-4 w-4 text-secondary" checked>
+                            <input type="hidden" name="is_active" value="0">
+                            <input type="checkbox" id="is_active" name="is_active" value="1" class="form-checkbox h-4 w-4 text-secondary" checked>
                             <label for="is_active" class="ml-2 block text-sm text-gray-900">
                                 Active (SACCO can accept new drivers and passengers)
                             </label>
