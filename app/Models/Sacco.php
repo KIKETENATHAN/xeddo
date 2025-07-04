@@ -41,6 +41,14 @@ class Sacco extends Model
     }
 
     /**
+     * Get the trips for this SACCO.
+     */
+    public function trips(): HasMany
+    {
+        return $this->hasMany(Trip::class);
+    }
+
+    /**
      * Get the full route display.
      */
     public function getFullRouteAttribute(): string

@@ -48,4 +48,12 @@ class DriverProfile extends Model
     {
         return $this->belongsTo(Sacco::class);
     }
+
+    /**
+     * Get the trips for this driver.
+     */
+    public function trips()
+    {
+        return $this->hasMany(Trip::class, 'driver_id');
+    }
 }

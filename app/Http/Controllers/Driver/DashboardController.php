@@ -22,8 +22,17 @@ class DashboardController extends Controller
         // Load the SACCO relationship
         $driverProfile->load('sacco');
 
+        // Get trip statistics
+        $totalTrips = $driverProfile->trips()->count();
+        $activeTrips = $driverProfile->trips()->whereIn('status', ['scheduled', 'in_progress'])->count();
+        $completedTrips = $driverProfile->trips()->where('status', 'completed')->count();
+        $totalEarnings = $driverProfile->trips()->where('status', 'completed')->sum('amount');
+
         $stats = [
-            'total_trips' => $driverProfile->total_trips,
+            'total_trips' => $totalTrips,
+            'active_trips' => $activeTrips,
+            'completed_trips' => $completedTrips,
+            'total_earnings' => $totalEarnings,
             'rating' => $driverProfile->rating,
             'status' => $driverProfile->status,
             'is_available' => $driverProfile->is_available,

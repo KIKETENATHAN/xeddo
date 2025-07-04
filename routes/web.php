@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SaccoController;
 use App\Http\Controllers\Driver\DashboardController as DriverDashboardController;
+use App\Http\Controllers\Driver\TripController;
 use App\Http\Controllers\Passenger\DashboardController as PassengerDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,10 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->g
     Route::get('/profile/edit', [DriverDashboardController::class, 'editProfile'])->name('profile.edit');
     Route::patch('/profile', [DriverDashboardController::class, 'updateProfile'])->name('profile.update');
     Route::patch('/toggle-availability', [DriverDashboardController::class, 'toggleAvailability'])->name('toggle.availability');
+    
+    // Trip management routes
+    Route::resource('trips', TripController::class);
+    Route::patch('/trips/{trip}/status', [TripController::class, 'updateStatus'])->name('trips.update-status');
 });
 
 // Passenger routes
