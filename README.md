@@ -1,4 +1,39 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Xeddo - Ride Sharing Application
+
+A modern ride-sharing application built with Laravel, featuring separate dashboards for passengers, drivers, and administrators.
+
+## Features
+
+### 🚗 **Multi-Role System**
+- **Passengers**: Book rides, manage profiles, view trip history
+- **Drivers**: Manage availability, vehicle information, view earnings
+- **Administrators**: Manage users, approve drivers, system oversight
+
+### 🎨 **Modern UI**
+- Responsive design with Tailwind CSS
+- Navy blue themed dashboard cards
+- Mobile-friendly navigation
+- Clean and professional interface
+
+### 🔐 **Authentication & Security**
+- Role-based access control
+- Secure user registration and login
+- Profile management
+- Driver verification system
+
+### 📱 **Dashboard Features**
+- **Passenger Dashboard**: Trip statistics, booking interface, profile management
+- **Driver Dashboard**: Trip stats, availability toggle, vehicle information
+- **Admin Dashboard**: User management, driver approvals, system statistics
+
+## Tech Stack
+
+- **Backend**: Laravel 11
+- **Frontend**: Blade Templates, Tailwind CSS, Alpine.js
+- **Database**: SQLite (configurable)
+- **Authentication**: Laravel Breeze
+- **Build Tools**: Vite
+- **Testing**: PHPUnit
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
@@ -44,18 +79,127 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 - **[Redberry](https://redberry.international/laravel-development)**
 - **[Active Logic](https://activelogic.com)**
 
+## Installation
+
+### Prerequisites
+- PHP 8.2 or higher
+- Composer
+- Node.js and npm
+- Git
+
+### Setup Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/xeddo-ride-sharing.git
+   cd xeddo-ride-sharing
+   ```
+
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
+
+3. **Install JavaScript dependencies**
+   ```bash
+   npm install
+   ```
+
+4. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+5. **Database setup**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+6. **Build assets**
+   ```bash
+   npm run build
+   ```
+
+7. **Start the development server**
+   ```bash
+   php artisan serve
+   ```
+
+## Default Admin Account
+
+After running the seeders, you can log in with:
+- **Email**: admin@xeddo.com
+- **Password**: password
+
+## Project Structure
+
+```
+xeddo/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/           # Admin-specific controllers
+│   │   │   ├── Auth/            # Authentication controllers
+│   │   │   ├── Driver/          # Driver dashboard controllers
+│   │   │   └── Passenger/       # Passenger dashboard controllers
+│   │   └── Middleware/
+│   └── Models/
+├── resources/
+│   └── views/
+│       ├── admin/               # Admin dashboard views
+│       ├── auth/                # Authentication views
+│       ├── driver/              # Driver dashboard views
+│       └── passenger/           # Passenger dashboard views
+└── routes/
+    └── web.php                  # Application routes
+```
+
+## Development
+
+### Running Tests
+```bash
+php artisan test
+```
+
+### Building for Production
+```bash
+npm run build
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Screenshots
+
+### Passenger Dashboard
+- Book rides with pickup and destination
+- View trip statistics and ratings
+- Manage emergency contacts and preferences
+
+### Driver Dashboard
+- Toggle availability status
+- View vehicle information
+- Track earnings and trip statistics
+
+### Admin Dashboard
+- Manage all users and drivers
+- Approve driver applications
+- View system-wide statistics
+
+## Support
+
+If you encounter any issues or have questions, please create an issue in the GitHub repository.
