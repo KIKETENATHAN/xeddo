@@ -16,14 +16,14 @@ export default {
             },
             colors: {
                 primary: {
-                    DEFAULT: '#1a2238',
-                    light: '#2a3248',
-                    dark: '#0a1228',
+                    DEFAULT: '#1e3a8a',
+                    light: '#3730a3',
+                    dark: '#1e40af',
                 },
                 secondary: {
-                    DEFAULT: '#9daaf2',
-                    light: '#b8c4f7',
-                    dark: '#7889ed',
+                    DEFAULT: '#f59e0b',
+                    light: '#fbbf24',
+                    dark: '#d97706',
                 },
                 accent: {
                     DEFAULT: '#ff6a3d',
