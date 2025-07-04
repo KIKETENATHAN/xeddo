@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Xeddo - Premium Ride Sharing Platform</title>
+    <title>Xeddo Travel link</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">
@@ -19,7 +19,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
                         </div>
-                        <h1 class="text-2xl font-bold text-primary">Xeddo</h1>
+                        <h1 class="text-2xl font-bold text-primary">Xeddo Travell Link</h1>
                     </div>
                     
                     <!-- Mobile menu button -->
@@ -335,28 +335,10 @@
                             </a>
                         </div>
                     </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-                        <ul class="space-y-2 text-blue-200">
-                            <li><a href="#" class="hover:text-secondary transition-colors">About Us</a></li>
-                            <li><a href="#" class="hover:text-secondary transition-colors">How It Works</a></li>
-                            <li><a href="#" class="hover:text-secondary transition-colors">Safety</a></li>
-                            <li><a href="#" class="hover:text-secondary transition-colors">Support</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4">Legal</h4>
-                        <ul class="space-y-2 text-blue-200">
-                            <li><a href="#" class="hover:text-secondary transition-colors">Terms of Service</a></li>
-                            <li><a href="#" class="hover:text-secondary transition-colors">Privacy Policy</a></li>
-                            <li><a href="#" class="hover:text-secondary transition-colors">Cookie Policy</a></li>
-                            <li><a href="#" class="hover:text-secondary transition-colors">Accessibility</a></li>
-                        </ul>
-                    </div>
                 </div>
                 <div class="border-t border-blue-700 mt-8 pt-8 text-center">
                     <p class="text-blue-200">
-                        © 2025 Xeddo. All rights reserved. | Designed with ❤️ for better transportation
+                        © 2025 Xeddo. All rights reserved. | Designed with ❤️ from Celertech Tech
                     </p>
                 </div>
             </div>
