@@ -377,6 +377,102 @@
             transform: scale(1.2);
         }
 
+        /* Booking Modal Styles */
+        .booking-modal {
+            display: none;
+            position: fixed;
+            z-index: 1100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .booking-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .booking-modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        .payment-status {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .payment-status .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-status .icon.processing {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .payment-status .icon.success {
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .payment-status .icon.failed {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .spinner-payment {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary-gold);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .receipt {
+            background: #f8fafc;
+            border: 2px dashed #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+        }
+
+        .receipt-row.total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 0.5rem;
+            margin-top: 1rem;
+        }
+
         @media (max-width: 768px) {
             .modal-content {
                 width: 95vw;
@@ -394,6 +490,11 @@
             .book-btn {
                 padding: 0.375rem 0.75rem;
                 font-size: 0.75rem;
+            }
+
+            .booking-modal-content {
+                width: 95%;
+                margin: 1rem;
             }
         }
     </style>
@@ -856,6 +957,133 @@
         </div>
     </div>
 
+    <!-- Booking/Payment Modal -->
+    <div id="bookingPaymentModal" class="booking-modal">
+        <div class="booking-modal-content">
+            <div class="modal-header">
+                <h2 class="text-2xl font-bold">Complete Your Booking</h2>
+                <button class="modal-close" onclick="closeBookingPaymentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Booking Form -->
+                <div id="bookingForm" class="space-y-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-primary mb-2">Trip Details</h3>
+                        <div id="tripDetails" class="text-sm text-gray-600">
+                            <!-- Trip details will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="passengerName" class="block text-sm font-semibold text-primary mb-2">Full Name</label>
+                            <input type="text" id="passengerName" name="passenger_name" class="form-input" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div>
+                            <label for="passengerEmail" class="block text-sm font-semibold text-primary mb-2">Email Address</label>
+                            <input type="email" id="passengerEmail" name="passenger_email" class="form-input" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div>
+                            <label for="passengerPhone" class="block text-sm font-semibold text-primary mb-2">Phone Number</label>
+                            <input type="tel" id="passengerPhone" name="passenger_phone" class="form-input" placeholder="254712345678" required>
+                            <p class="text-xs text-gray-500 mt-1">Enter your M-Pesa phone number</p>
+                        </div>
+                        
+                        <div>
+                            <label for="seatsCount" class="block text-sm font-semibold text-primary mb-2">Number of Seats</label>
+                            <select id="seatsCount" name="seats" class="form-input" required>
+                                <option value="1">1 Seat</option>
+                                <option value="2">2 Seats</option>
+                                <option value="3">3 Seats</option>
+                                <option value="4">4 Seats</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-semibold">Total Amount:</span>
+                            <span id="totalAmount" class="text-2xl font-bold text-secondary">KES 0</span>
+                        </div>
+                        <p class="text-sm text-gray-600">Payment will be processed via M-Pesa STK Push</p>
+                    </div>
+                    
+                    <button id="initiatePaymentBtn" class="btn-primary w-full">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                        Proceed to Payment
+                    </button>
+                </div>
+                
+                <!-- Payment Processing -->
+                <div id="paymentProcessing" class="payment-status" style="display: none;">
+                    <div class="icon processing">
+                        <div class="spinner-payment"></div>
+                    </div>
+                    <h3 class="text-xl font-bold text-primary mb-2">Processing Payment</h3>
+                    <p class="text-gray-600 mb-4">Please complete the payment on your phone. Check your M-Pesa notifications and enter your PIN.</p>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">
+                            <strong>Amount:</strong> <span id="processingAmount"></span><br>
+                            <strong>Phone:</strong> <span id="processingPhone"></span><br>
+                            <strong>Reference:</strong> <span id="processingReference"></span>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Payment Success -->
+                <div id="paymentSuccess" class="payment-status" style="display: none;">
+                    <div class="icon success">
+                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-600 mb-2">Payment Successful!</h3>
+                    <p class="text-gray-600 mb-4">Your booking has been confirmed. Here's your receipt:</p>
+                    
+                    <div id="receiptContainer" class="receipt">
+                        <!-- Receipt will be populated here -->
+                    </div>
+                    
+                    <div class="flex gap-3 mt-6">
+                        <button onclick="downloadReceipt()" class="btn-secondary flex-1">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download Receipt
+                        </button>
+                        <button onclick="closeBookingPaymentModal()" class="btn-primary flex-1">
+                            Close
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Payment Failed -->
+                <div id="paymentFailed" class="payment-status" style="display: none;">
+                    <div class="icon failed">
+                        <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-red-600 mb-2">Payment Failed</h3>
+                    <p class="text-gray-600 mb-4" id="paymentErrorMessage">The payment could not be processed. Please try again.</p>
+                    
+                    <div class="flex gap-3 mt-6">
+                        <button onclick="retryPayment()" class="btn-secondary flex-1">
+                            Try Again
+                        </button>
+                        <button onclick="closeBookingPaymentModal()" class="btn-primary flex-1">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
@@ -895,7 +1123,7 @@
                 saccos.forEach(sacco => {
                     const option = document.createElement('option');
                     option.value = sacco.id;
-                    option.textContent = `${sacco.name} - ${sacco.full_route}`;
+                    option.textContent = sacco.name + ' - ' + sacco.full_route;
                     select.appendChild(option);
                 });
             } catch (error) {
@@ -948,10 +1176,13 @@
 
         // Display search results
         function displayResults(trips) {
+            // Store results globally for booking
+            window.lastSearchResults = trips;
+            
             const resultsCount = document.getElementById('resultsCount');
             const tableBody = document.getElementById('resultsTableBody');
             
-            resultsCount.textContent = `${trips.length} ride(s) found matching your search`;
+            resultsCount.textContent = trips.length + ' ride(s) found matching your search';
             
             tableBody.innerHTML = '';
             
@@ -971,52 +1202,61 @@
                     hour12: true 
                 });
                 
-                row.innerHTML = `
-                    <td class="py-4 px-4">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gradient-navy rounded-full flex items-center justify-center mr-3">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="font-medium text-primary">${trip.driver.user.name}</div>
-                                <div class="text-sm text-gray-600">${trip.driver.license_number}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="py-4 px-4">
-                        <div class="text-sm font-medium text-primary">${trip.sacco.name}</div>
-                        <div class="text-xs text-gray-600">${trip.sacco.route}</div>
-                    </td>
-                    <td class="py-4 px-4 route-cell">
-                        <div class="text-sm">
-                            <div class="font-medium text-gray-900">${trip.from_location}</div>
-                            <div class="text-gray-600 text-xs">to</div>
-                            <div class="font-medium text-gray-900">${trip.to_location}</div>
-                        </div>
-                    </td>
-                    <td class="py-4 px-4">
-                        <div class="text-sm">
-                            <div class="font-medium text-gray-900">${formattedDate}</div>
-                            <div class="text-gray-600">${formattedTime}</div>
-                        </div>
-                    </td>
-                    <td class="py-4 px-4">
-                        <div class="text-lg font-bold text-secondary">${trip.formatted_amount}</div>
-                    </td>
-                    <td class="py-4 px-4">
-                        <div class="text-sm">
-                            <div class="font-medium text-gray-900">${trip.remaining_seats} available</div>
-                            <div class="text-gray-600 text-xs">of ${trip.available_seats} total</div>
-                        </div>
-                    </td>
-                    <td class="py-4 px-4 text-right">
-                        <button onclick="showRegisterPrompt()" class="book-btn">
-                            Book Now
-                        </button>
-                    </td>
-                `;
+                // Create cells programmatically to avoid template string issues
+                const driverCell = document.createElement('td');
+                driverCell.className = 'py-4 px-4';
+                driverCell.innerHTML = '<div class="flex items-center">' +
+                    '<div class="w-10 h-10 bg-gradient-navy rounded-full flex items-center justify-center mr-3">' +
+                    '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>' +
+                    '</svg></div>' +
+                    '<div><div class="font-medium text-primary">' + trip.driver.user.name + '</div>' +
+                    '<div class="text-sm text-gray-600">' + trip.driver.license_number + '</div></div></div>';
+                
+                const saccoCell = document.createElement('td');
+                saccoCell.className = 'py-4 px-4';
+                saccoCell.innerHTML = '<div class="text-sm font-medium text-primary">' + trip.sacco.name + '</div>' +
+                    '<div class="text-xs text-gray-600">' + trip.sacco.route + '</div>';
+                
+                const routeCell = document.createElement('td');
+                routeCell.className = 'py-4 px-4 route-cell';
+                routeCell.innerHTML = '<div class="text-sm">' +
+                    '<div class="font-medium text-gray-900">' + trip.from_location + '</div>' +
+                    '<div class="text-gray-600 text-xs">to</div>' +
+                    '<div class="font-medium text-gray-900">' + trip.to_location + '</div></div>';
+                
+                const timeCell = document.createElement('td');
+                timeCell.className = 'py-4 px-4';
+                timeCell.innerHTML = '<div class="text-sm">' +
+                    '<div class="font-medium text-gray-900">' + formattedDate + '</div>' +
+                    '<div class="text-gray-600">' + formattedTime + '</div></div>';
+                
+                const priceCell = document.createElement('td');
+                priceCell.className = 'py-4 px-4';
+                priceCell.innerHTML = '<div class="text-lg font-bold text-secondary">' + trip.formatted_amount + '</div>';
+                
+                const seatsCell = document.createElement('td');
+                seatsCell.className = 'py-4 px-4';
+                seatsCell.innerHTML = '<div class="text-sm">' +
+                    '<div class="font-medium text-gray-900">' + trip.remaining_seats + ' available</div>' +
+                    '<div class="text-gray-600 text-xs">of ' + trip.available_seats + ' total</div></div>';
+                
+                const actionCell = document.createElement('td');
+                actionCell.className = 'py-4 px-4 text-right';
+                const bookButton = document.createElement('button');
+                bookButton.className = 'book-btn';
+                bookButton.textContent = 'Book Now';
+                bookButton.setAttribute('data-trip-id', trip.id);
+                bookButton.onclick = function() { initiateBooking(trip.id); };
+                actionCell.appendChild(bookButton);
+                
+                row.appendChild(driverCell);
+                row.appendChild(saccoCell);
+                row.appendChild(routeCell);
+                row.appendChild(timeCell);
+                row.appendChild(priceCell);
+                row.appendChild(seatsCell);
+                row.appendChild(actionCell);
                 
                 tableBody.appendChild(row);
             });
@@ -1024,10 +1264,290 @@
             document.getElementById('searchResults').style.display = 'block';
         }
 
-        // Show register prompt when user tries to book
-        function showRegisterPrompt() {
-            if (confirm('You need to register as a passenger to book a ride. Would you like to register now?')) {
-                window.location.href = '{{ route("register.passenger") }}';
+        // Global variables for booking
+        let selectedTrip = null;
+        let bookingData = null;
+        let paymentStatusInterval = null;
+
+        // Initiate booking process
+        function initiateBooking(tripId) {
+            // Find the trip from the last search results
+            const tripData = window.lastSearchResults?.find(trip => trip.id === tripId);
+            if (!tripData) {
+                alert('Trip information not found. Please search again.');
+                return;
+            }
+            
+            selectedTrip = tripData;
+            openBookingPaymentModal();
+        }
+
+        // Open booking/payment modal
+        function openBookingPaymentModal() {
+            if (!selectedTrip) {
+                alert('Please select a trip first.');
+                return;
+            }
+
+            document.getElementById('bookingPaymentModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Populate trip details
+            populateTripDetails(selectedTrip);
+            
+            // Show booking form
+            showBookingForm();
+            
+            // Update total amount when seats change
+            document.getElementById('seatsCount').addEventListener('change', updateTotalAmount);
+            updateTotalAmount();
+        }
+
+        // Close booking/payment modal
+        function closeBookingPaymentModal() {
+            document.getElementById('bookingPaymentModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Clear any payment status interval
+            if (paymentStatusInterval) {
+                clearInterval(paymentStatusInterval);
+                paymentStatusInterval = null;
+            }
+            
+            // Reset form
+            resetBookingForm();
+        }
+
+        // Populate trip details
+        function populateTripDetails(trip) {
+            const departureDate = new Date(trip.departure_time);
+            const formattedDate = departureDate.toLocaleDateString('en-US', { 
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const formattedTime = departureDate.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            
+            const tripDetailsHtml = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
+                '<div>' +
+                '<strong>SACCO:</strong> ' + trip.sacco.name + '<br>' +
+                '<strong>Driver:</strong> ' + trip.driver.user.name + '<br>' +
+                '<strong>Route:</strong> ' + trip.from_location + ' to ' + trip.to_location +
+                '</div>' +
+                '<div>' +
+                '<strong>Departure:</strong> ' + formattedDate + '<br>' +
+                '<strong>Time:</strong> ' + formattedTime + '<br>' +
+                '<strong>Price per seat:</strong> ' + trip.formatted_amount +
+                '</div>' +
+                '</div>';
+            
+            document.getElementById('tripDetails').innerHTML = tripDetailsHtml;
+        }
+
+        // Update total amount
+        function updateTotalAmount() {
+            const seats = parseInt(document.getElementById('seatsCount').value) || 1;
+            const totalAmount = selectedTrip.amount * seats;
+            document.getElementById('totalAmount').textContent = 'KES ' + totalAmount.toLocaleString();
+        }
+
+        // Show booking form
+        function showBookingForm() {
+            document.getElementById('bookingForm').style.display = 'block';
+            document.getElementById('paymentProcessing').style.display = 'none';
+            document.getElementById('paymentSuccess').style.display = 'none';
+            document.getElementById('paymentFailed').style.display = 'none';
+        }
+
+        // Reset booking form
+        function resetBookingForm() {
+            document.getElementById('bookingForm').reset();
+            selectedTrip = null;
+            bookingData = null;
+            showBookingForm();
+        }
+
+        // Handle payment initiation
+        document.getElementById('initiatePaymentBtn').addEventListener('click', async function() {
+            const form = document.getElementById('bookingForm');
+            const formData = new FormData(form);
+            
+            // Validate form
+            const passengerName = formData.get('passenger_name') || document.getElementById('passengerName').value;
+            const passengerEmail = formData.get('passenger_email') || document.getElementById('passengerEmail').value;
+            const passengerPhone = formData.get('passenger_phone') || document.getElementById('passengerPhone').value;
+            const seats = parseInt(formData.get('seats') || document.getElementById('seatsCount').value);
+            
+            if (!passengerName || !passengerEmail || !passengerPhone || !seats) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Format phone number
+            let phone = passengerPhone.replace(/\D/g, '');
+            if (phone.startsWith('0')) {
+                phone = '254' + phone.substring(1);
+            } else if (!phone.startsWith('254')) {
+                phone = '254' + phone;
+            }
+            
+            const bookingRequest = {
+                trip_id: selectedTrip.id,
+                passenger_name: passengerName,
+                passenger_email: passengerEmail,
+                passenger_phone: phone,
+                seats: seats
+            };
+            
+            try {
+                showPaymentProcessing();
+                
+                const response = await fetch('/api/initiate-booking', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(bookingRequest)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    bookingData = result;
+                    
+                    // Update processing details
+                    document.getElementById('processingAmount').textContent = 'KES ' + result.amount.toLocaleString();
+                    document.getElementById('processingPhone').textContent = phone;
+                    document.getElementById('processingReference').textContent = result.booking_reference;
+                    
+                    // Start checking payment status
+                    startPaymentStatusCheck(result.checkout_request_id);
+                } else {
+                    showPaymentFailed(result.message || 'Failed to initiate payment');
+                }
+                
+            } catch (error) {
+                console.error('Booking error:', error);
+                showPaymentFailed('An error occurred while processing your booking');
+            }
+        });
+
+        // Show payment processing
+        function showPaymentProcessing() {
+            document.getElementById('bookingForm').style.display = 'none';
+            document.getElementById('paymentProcessing').style.display = 'block';
+            document.getElementById('paymentSuccess').style.display = 'none';
+            document.getElementById('paymentFailed').style.display = 'none';
+        }
+
+        // Start payment status check
+        function startPaymentStatusCheck(checkoutRequestId) {
+            let attempts = 0;
+            const maxAttempts = 60; // 5 minutes max (5 second intervals)
+            
+            paymentStatusInterval = setInterval(async () => {
+                attempts++;
+                
+                if (attempts > maxAttempts) {
+                    clearInterval(paymentStatusInterval);
+                    showPaymentFailed('Payment timeout. Please try again.');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/check-payment-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                        },
+                        body: JSON.stringify({
+                            checkout_request_id: checkoutRequestId
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        if (result.payment_status === 'completed') {
+                            clearInterval(paymentStatusInterval);
+                            showPaymentSuccess(result.receipt_data);
+                        } else if (result.payment_status === 'failed') {
+                            clearInterval(paymentStatusInterval);
+                            showPaymentFailed(result.message || 'Payment failed');
+                        }
+                        // Continue checking if status is still 'processing'
+                    }
+                } catch (error) {
+                    console.error('Payment status check error:', error);
+                    // Continue checking
+                }
+            }, 5000); // Check every 5 seconds
+        }
+
+        // Show payment success
+        function showPaymentSuccess(receiptData) {
+            document.getElementById('bookingForm').style.display = 'none';
+            document.getElementById('paymentProcessing').style.display = 'none';
+            document.getElementById('paymentSuccess').style.display = 'block';
+            document.getElementById('paymentFailed').style.display = 'none';
+            
+            // Populate receipt
+            if (receiptData) {
+                document.getElementById('receiptContainer').innerHTML = receiptData;
+            }
+        }
+
+        // Show payment failed
+        function showPaymentFailed(message) {
+            document.getElementById('bookingForm').style.display = 'none';
+            document.getElementById('paymentProcessing').style.display = 'none';
+            document.getElementById('paymentSuccess').style.display = 'none';
+            document.getElementById('paymentFailed').style.display = 'block';
+            
+            document.getElementById('paymentErrorMessage').textContent = message;
+        }
+
+        // Retry payment
+        function retryPayment() {
+            showBookingForm();
+        }
+
+        // Download receipt
+        function downloadReceipt() {
+            if (bookingData && bookingData.booking_reference) {
+                const receiptUrl = '/receipt/' + bookingData.booking_reference + '?print=true';
+                window.open(receiptUrl, '_blank');
+            } else {
+                const receiptContent = document.getElementById('receiptContainer').innerHTML;
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Booking Receipt</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; margin: 20px; }
+                                .receipt { border: 2px solid #333; padding: 20px; max-width: 600px; }
+                                .receipt-header { text-align: center; margin-bottom: 20px; }
+                                .receipt-row { display: flex; justify-content: space-between; margin: 10px 0; }
+                                .receipt-row.total { font-weight: bold; border-top: 1px solid #333; padding-top: 10px; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="receipt">
+                                ${receiptContent}
+                            </div>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
             }
         }
 
@@ -1038,10 +1558,21 @@
             }
         });
 
+        // Close booking payment modal when clicking outside
+        document.getElementById('bookingPaymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBookingPaymentModal();
+            }
+        });
+
         // Close modal with Escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('bookingModal').classList.contains('active')) {
-                closeBookingModal();
+            if (e.key === 'Escape') {
+                if (document.getElementById('bookingModal').classList.contains('active')) {
+                    closeBookingModal();
+                } else if (document.getElementById('bookingPaymentModal').classList.contains('active')) {
+                    closeBookingPaymentModal();
+                }
             }
         });
 

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Xeddo Booking System Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Booking Flow</h2>
+        <p>This test simulates the booking flow with mock data.</p>
+        
+        <button onclick="testBooking()">Test Booking</button>
+        <button onclick="testPaymentStatus()">Test Payment Status</button>
+        
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        async function testBooking() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '<p>Testing booking...</p>';
+            
+            try {
+                const response = await fetch('/api/initiate-booking', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 'test-token'
+                    },
+                    body: JSON.stringify({
+                        trip_id: 1,
+                        passenger_name: 'John Doe',
+                        passenger_email: 'john@example.com',
+                        passenger_phone: '254712345678',
+                        seats: 1
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="success">
+                            <h3>Booking Initiated Successfully!</h3>
+                            <p>Booking Reference: ${result.booking_reference}</p>
+                            <p>Payment Reference: ${result.payment_reference}</p>
+                            <p>Amount: KES ${result.amount}</p>
+                            <p>Checkout Request ID: ${result.checkout_request_id}</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">Error: ${result.message}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testPaymentStatus() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '<p>Testing payment status...</p>';
+            
+            try {
+                const response = await fetch('/api/check-payment-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': 'test-token'
+                    },
+                    body: JSON.stringify({
+                        checkout_request_id: 'ws_CO_DMZ_123456789_12345678'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="success">
+                            <h3>Payment Status Check Successful!</h3>
+                            <p>Status: ${result.payment_status}</p>
+                            <p>Message: ${result.message}</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<div class="error">Error: ${result.message}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

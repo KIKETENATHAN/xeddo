@@ -8,6 +8,7 @@ use App\Http\Controllers\Driver\DashboardController as DriverDashboardController
 use App\Http\Controllers\Driver\TripController;
 use App\Http\Controllers\Passenger\DashboardController as PassengerDashboardController;
 use App\Http\Controllers\Api\RideSearchController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,6 +18,13 @@ Route::get('/', function () {
 // API routes for ride search (public access)
 Route::get('/api/saccos', [RideSearchController::class, 'getSaccos']);
 Route::post('/api/search-rides', [RideSearchController::class, 'searchRides']);
+
+// API routes for booking and payment (public access)
+Route::post('/api/initiate-booking', [PaymentController::class, 'initiateBooking']);
+Route::post('/api/check-payment-status', [PaymentController::class, 'checkPaymentStatus']);
+Route::post('/api/mpesa-callback', [PaymentController::class, 'mpesaCallback']);
+Route::get('/api/receipt/{booking}', [PaymentController::class, 'getReceipt']);
+Route::get('/receipt/{booking}', [PaymentController::class, 'getReceiptView'])->name('receipt.view');
 
 // Registration routes
 Route::get('/register/passenger', [RegisterController::class, 'showPassengerForm'])->name('register.passenger');
@@ -69,7 +77,7 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->g
 Route::middleware(['auth', 'role:passenger'])->prefix('passenger')->name('passenger.')->group(function () {
     Route::get('/dashboard', [PassengerDashboardController::class, 'index'])->name('dashboard');
     Route::patch('/profile', [PassengerDashboardController::class, 'updateProfile'])->name('profile.update');
-    Route::post('/search-rides', [PassengerDashboardController::class, 'searchRides'])->name('search.rides');
+    Route::match(['get', 'post'], '/search-rides', [PassengerDashboardController::class, 'searchRides'])->name('search.rides');
     Route::post('/book-ride/{trip}', [PassengerDashboardController::class, 'bookRide'])->name('book.ride');
 });
 

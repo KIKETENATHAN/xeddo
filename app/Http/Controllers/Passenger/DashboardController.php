@@ -49,6 +49,11 @@ class DashboardController extends Controller
 
     public function searchRides(Request $request)
     {
+        // If it's a GET request, redirect to dashboard
+        if ($request->isMethod('get')) {
+            return redirect()->route('passenger.dashboard');
+        }
+
         $request->validate([
             'sacco_id' => 'required|exists:saccos,id',
             'pickup' => 'required|string|max:255',
