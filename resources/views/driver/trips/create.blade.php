@@ -19,10 +19,13 @@
         }
         
         :root {
-            --primary-color: #f97316;
-            --primary-hover: #ea580c;
-            --secondary-color: #1f2937;
-            --accent-color: #3b82f6;
+            --primary-navy: #1e3a8a;
+            --primary-navy-dark: #1e40af;
+            --secondary-gold: #f59e0b;
+            --secondary-gold-dark: #d97706;
+            --accent-gold: #fbbf24;
+            --gradient-navy: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             --success-color: #10b981;
             --warning-color: #f59e0b;
             --error-color: #ef4444;
@@ -38,12 +41,19 @@
             margin: 2rem auto;
             background: white;
             border-radius: 12px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .form-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
         
         .form-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            background: var(--gradient-navy);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -84,8 +94,8 @@
         
         .form-input:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+            border-color: var(--primary-navy);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
         
         .form-input[readonly] {
@@ -106,8 +116,8 @@
         
         .form-textarea:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+            border-color: var(--primary-navy);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
         }
         
         .amount-input-container {
@@ -157,23 +167,27 @@
         }
         
         .btn-primary {
-            background: var(--primary-color);
+            background: var(--gradient-navy);
             color: white;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
         }
         
         .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
+            background: var(--gradient-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
         }
         
         .btn-secondary {
             background: var(--text-secondary);
             color: white;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
         }
         
         .btn-secondary:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
+            background: var(--secondary-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
         }
         
         .info-text {
@@ -183,11 +197,11 @@
         }
         
         .required {
-            color: var(--error-color);
+            color: var(--secondary-gold);
         }
         
         .navigation {
-            background: var(--primary-color);
+            background: var(--primary-navy);
             color: white;
             padding: 1rem 0;
             position: sticky;
@@ -259,11 +273,13 @@
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); min-height: 100vh;">>
     <!-- Navigation -->
     <nav class="navigation">
         <div class="nav-container">
-            <a href="{{ route('driver.dashboard') }}" class="nav-brand">Xeddo</a>
+            <a href="{{ route('driver.dashboard') }}" class="nav-brand">
+                <span class="gradient-navy" style="padding: 0.5rem 1rem; border-radius: 0.5rem; background: var(--gradient-gold);">Xeddo</span>
+            </a>
             <div class="nav-links">
                 <a href="{{ route('driver.dashboard') }}" class="nav-link">Dashboard</a>
                 <a href="{{ route('driver.trips.index') }}" class="nav-link">My Trips</a>

@@ -13,9 +13,14 @@
         html, body {
             margin: 0;
             padding: 0;
-            height: 100%;
+            min-height: 100vh;
             overflow-x: hidden;
             scroll-behavior: smooth;
+        }
+        
+        body {
+            overflow-y: auto;
+            min-height: 100vh;
         }
         :root {
             --primary-navy: #1e3a8a;
@@ -138,10 +143,6 @@
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
             position: relative;
-        }
-
-        body {
-            overflow-x: hidden;
             overflow-y: auto;
         }
 
@@ -149,6 +150,7 @@
             padding-bottom: 3rem;
             position: relative;
             z-index: 1;
+            min-height: calc(100vh - 4rem);
         }
 
         .success-alert {
