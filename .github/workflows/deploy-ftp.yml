@@ -47,15 +47,11 @@ jobs:
 
     - name: Prepare deployment files
       run: |
-        # Remove development files
-        rm -rf node_modules tests .git .github
-        rm -f .env.example phpunit.xml
-        
         # Create directory structure for cPanel
         mkdir -p deployment/laravel_app
         mkdir -p deployment/public_html
         
-        # Copy Laravel app files (excluding public)
+        # Copy Laravel app files (excluding public and development files)
         cp -r app bootstrap config database resources routes storage vendor deployment/laravel_app/
         cp artisan composer.json composer.lock .env.production deployment/laravel_app/
         mv deployment/laravel_app/.env.production deployment/laravel_app/.env
