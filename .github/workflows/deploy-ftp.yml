@@ -1,0 +1,93 @@
+name: Deploy to cPanel (FTP Only)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, dom, fileinfo, mysql, gd, zip
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install Composer Dependencies
+      run: composer install --no-dev --optimize-autoloader --no-interaction
+
+    - name: Install NPM Dependencies
+      run: npm ci
+
+    - name: Build Assets
+      run: npm run build
+
+    - name: Create production .env
+      run: |
+        cp .env.example .env.production
+        sed -i 's/APP_ENV=local/APP_ENV=production/' .env.production
+        sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env.production
+        sed -i "s|APP_URL=http://localhost|APP_URL=https://${{ secrets.DOMAIN_NAME }}|" .env.production
+        sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/' .env.production
+        sed -i "s/DB_DATABASE=laravel/DB_DATABASE=${{ secrets.DB_DATABASE }}/" .env.production
+        sed -i "s/DB_USERNAME=root/DB_USERNAME=${{ secrets.DB_USERNAME }}/" .env.production
+        sed -i "s/DB_PASSWORD=/DB_PASSWORD=${{ secrets.DB_PASSWORD }}/" .env.production
+
+    - name: Prepare deployment files
+      run: |
+        # Remove development files
+        rm -rf node_modules tests .git .github
+        rm -f .env.example phpunit.xml
+        
+        # Create directory structure for cPanel
+        mkdir -p deployment/laravel_app
+        mkdir -p deployment/public_html
+        
+        # Copy Laravel app files (excluding public)
+        cp -r app bootstrap config database resources routes storage vendor deployment/laravel_app/
+        cp artisan composer.json composer.lock .env.production deployment/laravel_app/
+        mv deployment/laravel_app/.env.production deployment/laravel_app/.env
+        
+        # Copy public files to public_html
+        cp -r public/* deployment/public_html/
+        
+        # Update index.php to point to correct Laravel location
+        sed -i "s|__DIR__.'/../|__DIR__.'/../laravel_app/|g" deployment/public_html/index.php
+
+    - name: Deploy Laravel App to FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./deployment/laravel_app/
+        server-dir: /laravel_app/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/tests/**
+
+    - name: Deploy Public Files to FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./deployment/public_html/
+        server-dir: /public_html/
+        exclude: |
+          **/.git*
+          **/.git*/**
