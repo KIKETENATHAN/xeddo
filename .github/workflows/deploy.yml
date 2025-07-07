@@ -85,7 +85,7 @@ jobs:
           find deployment_temp -maxdepth 2 -name "*.php" | head -10
           
           # Create timestamp test files to verify deployment is working
-          echo "<?php echo 'DEPLOYMENT TEST: ' . date('Y-m-d H:i:s') . ' - Files deployed successfully!'; ?>" > deployment_temp/deployment_check.php
+          echo "<?php echo 'DEPLOYMENT TEST: ' . date('Y-m-d H:i:s') . ' - Files deployed successfully!' . '<br>Directory: ' . __DIR__ . '<br>Document Root: ' . \$_SERVER['DOCUMENT_ROOT']; ?>" > deployment_temp/deployment_check.php
           echo "<?php echo 'XEDDO FOLDER TEST: ' . __DIR__ . ' - ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/xeddo/xeddo_test.php
           
           # Show what we're about to deploy
