@@ -27,46 +27,62 @@ jobs:
 
       - name: Create deployment structure
         run: |
-          echo "🔍 Debugging deployment structure..."
+          echo "🔍 Creating optimized deployment structure..."
           
-          # Create multiple possible deployment paths
+          # Create the correct paths based on discovery
           mkdir -p deployment_temp/public_html
-          mkdir -p deployment_temp/www
-          mkdir -p deployment_temp/htdocs
           mkdir -p deployment_temp/xeddo
           
-          # Copy Laravel files to xeddo directory
+          # Copy Laravel files to xeddo directory (your server location)
           rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' ./ deployment_temp/xeddo/
           
-          # Copy public files to all possible web roots
-          cp -r public/* deployment_temp/public_html/ 2>/dev/null || echo "No public files to copy to public_html"
-          cp -r public/* deployment_temp/www/ 2>/dev/null || echo "No public files to copy to www"
-          cp -r public/* deployment_temp/htdocs/ 2>/dev/null || echo "No public files to copy to htdocs"
+          # Copy public files to public_html (your domain root)
+          cp -r public/* deployment_temp/public_html/
           
-          # Copy index.php to all locations
+          # Copy the correct index.php to public_html
           cp index_for_public_html.php deployment_temp/public_html/index.php
-          cp index_for_public_html.php deployment_temp/www/index.php
-          cp index_for_public_html.php deployment_temp/htdocs/index.php
           
-          # Copy test files to all locations
-          cp simple_test.php deployment_temp/public_html/simple_test.php
-          cp simple_test.php deployment_temp/www/simple_test.php
-          cp simple_test.php deployment_temp/htdocs/simple_test.php
-          cp simple_test.php deployment_temp/simple_test.php
+          # Copy diagnostic files
+          cp diagnostic.php deployment_temp/public_html/diagnostic.php
+          cp verify.php deployment_temp/public_html/verify.php
           
-          # Create a test file in the root deployment directory
-          echo "<?php echo 'ROOT: Deployment test from root - ' . __DIR__ . ' - ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/root_test.php
+          # Create .env file for production
+          cat > deployment_temp/xeddo/.env << 'EOF'
+          APP_NAME=Xeddolink
+          APP_ENV=production
+          APP_KEY=base64:your_app_key_here
+          APP_DEBUG=false
+          APP_URL=https://xeddotravelink.com
           
-          # Show what we're deploying
-          echo "📁 Deployment structure:"
-          find deployment_temp -name "*.php" | head -20
+          DB_CONNECTION=mysql
+          DB_HOST=localhost
+          DB_PORT=3306
+          DB_DATABASE=your_database_name
+          DB_USERNAME=your_database_user
+          DB_PASSWORD=your_database_password
+          
+          LOG_CHANNEL=stack
+          LOG_DEPRECATIONS_CHANNEL=null
+          LOG_LEVEL=debug
+          EOF
+          
+          # Ensure storage directories exist
+          mkdir -p deployment_temp/xeddo/storage/logs
+          mkdir -p deployment_temp/xeddo/storage/framework/cache
+          mkdir -p deployment_temp/xeddo/storage/framework/sessions
+          mkdir -p deployment_temp/xeddo/storage/framework/views
           
           # Verify vendor folder
           if [ -d "deployment_temp/xeddo/vendor" ]; then
             echo "✅ Vendor folder successfully copied"
+            ls -la deployment_temp/xeddo/vendor/ | head -5
           else
             echo "❌ Vendor folder missing!"
           fi
+          
+          # Show final structure
+          echo "📁 Final deployment structure:"
+          find deployment_temp -type f -name "*.php" | grep -E "(index|diagnostic)" | head -10
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
