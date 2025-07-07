@@ -1,4 +1,4 @@
-name: 🚀 Deploy Laravel App via FTP
+name: 🔄 Test Deploy to cPanel
 
 on:
   push:
@@ -6,30 +6,21 @@ on:
       - main
 
 jobs:
-  deploy:
-    name: Upload to cPanel Hosting
+  ftp-deploy:
+    name: Upload test file to public_html
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Upload xeddo (Laravel core) to /xeddo/
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: xeddo/
-        local-dir: ./xeddo/
-
-    - name: Upload public (Laravel public) to /public_html/
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: public_html/
-        local-dir: ./public/
-        verbose: true
-
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: public_html/
+          local-dir: ./public/
+          dangerous-clean-slate: false
+          verbose: true
