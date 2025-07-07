@@ -83,6 +83,10 @@ jobs:
           # Show final structure
           echo "📁 Final deployment structure:"
           find deployment_temp -type f -name "*.php" | grep -E "(index|diagnostic)" | head -10
+          
+          # Create a simple test file to verify deployment path
+          echo "<?php echo 'FTP Test: ' . __DIR__ . ' at ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/ftp_test.php
+          echo "<?php echo 'PUBLIC HTML Test: ' . __DIR__ . ' at ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/public_html/public_test.php
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -91,6 +95,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deployment_temp/
-          server-dir: /
+          server-dir: /home/xeddotra/
           exclude: |
             **/storage/logs/**
