@@ -4,15 +4,15 @@ echo "<h2>Laravel Deployment Diagnostic</h2>";
 
 echo "<h3>1. File Paths Check</h3>";
 echo "Current directory: " . __DIR__ . "<br>";
-echo "Laravel app path: " . __DIR__ . '/../laravel_app' . "<br>";
+echo "Laravel app path: " . __DIR__ . '/xeddo' . "<br>";
 
 echo "<h3>2. Key Files Existence</h3>";
 $files_to_check = [
-    '../laravel_app/vendor/autoload.php',
-    '../laravel_app/bootstrap/app.php',
-    '../laravel_app/storage/framework/maintenance.php',
-    '../laravel_app/.env',
-    '../laravel_app/config/app.php'
+    'xeddo/vendor/autoload.php',
+    'xeddo/bootstrap/app.php',
+    'xeddo/storage/framework/maintenance.php',
+    'xeddo/.env',
+    'xeddo/config/app.php'
 ];
 
 foreach ($files_to_check as $file) {
@@ -22,10 +22,10 @@ foreach ($files_to_check as $file) {
 
 echo "<h3>3. Directory Permissions</h3>";
 $dirs_to_check = [
-    '../laravel_app/storage',
-    '../laravel_app/storage/logs',
-    '../laravel_app/storage/framework',
-    '../laravel_app/bootstrap/cache'
+    'xeddo/storage',
+    'xeddo/storage/logs',
+    'xeddo/storage/framework',
+    'xeddo/bootstrap/cache'
 ];
 
 foreach ($dirs_to_check as $dir) {
@@ -43,12 +43,12 @@ echo "Current working directory: " . getcwd() . "<br>";
 
 echo "<h3>5. Try Loading Laravel</h3>";
 try {
-    if (file_exists(__DIR__ . '/../laravel_app/vendor/autoload.php')) {
-        require __DIR__ . '/../laravel_app/vendor/autoload.php';
+    if (file_exists(__DIR__ . '/xeddo/vendor/autoload.php')) {
+        require __DIR__ . '/xeddo/vendor/autoload.php';
         echo "✅ Autoloader loaded successfully<br>";
         
-        if (file_exists(__DIR__ . '/../laravel_app/bootstrap/app.php')) {
-            $app = require_once __DIR__ . '/../laravel_app/bootstrap/app.php';
+        if (file_exists(__DIR__ . '/xeddo/bootstrap/app.php')) {
+            $app = require_once __DIR__ . '/xeddo/bootstrap/app.php';
             echo "✅ Laravel app loaded successfully<br>";
             echo "App Name: " . config('app.name', 'Not found') . "<br>";
             echo "App Environment: " . config('app.env', 'Not found') . "<br>";
