@@ -83,6 +83,16 @@ jobs:
           # Show final structure
           echo "📁 Final deployment structure:"
           find deployment_temp -maxdepth 2 -name "*.php" | head -10
+          
+          # Create timestamp test files to verify deployment is working
+          echo "<?php echo 'DEPLOYMENT TEST: ' . date('Y-m-d H:i:s') . ' - Files deployed successfully!'; ?>" > deployment_temp/deployment_check.php
+          echo "<?php echo 'XEDDO FOLDER TEST: ' . __DIR__ . ' - ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/xeddo/xeddo_test.php
+          
+          # Show what we're about to deploy
+          echo "📋 Files being deployed:"
+          ls -la deployment_temp/ | head -10
+          echo "📋 Laravel app files:"
+          ls -la deployment_temp/xeddo/ | head -10
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -92,5 +102,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deployment_temp/
           server-dir: ${{ secrets.FTP_REMOTE_DIR }}
+          dry-run: false
           exclude: |
             **/storage/logs/**
