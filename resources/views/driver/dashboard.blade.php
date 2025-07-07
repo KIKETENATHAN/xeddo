@@ -652,6 +652,118 @@
                 </div>
             </div>
 
+            <!-- Recent/Upcoming Trips -->
+            @if($recentTrips->isNotEmpty())
+            <div class="mt-12 fade-in stagger-3">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-primary">Upcoming Trips</h3>
+                    <a href="{{ route('driver.trips.index') }}" class="text-secondary hover:text-secondary-dark font-medium">
+                        View All Trips →
+                    </a>
+                </div>
+                
+                <div class="space-y-4">
+                    @foreach($recentTrips as $trip)
+                        <div class="dashboard-card p-6">
+                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                            @if($trip->status === 'scheduled') bg-blue-100 text-blue-800
+                                            @elseif($trip->status === 'in_progress') bg-yellow-100 text-yellow-800
+                                            @endif">
+                                            {{ ucfirst(str_replace('_', ' ', $trip->status)) }}
+                                        </span>
+                                        <span class="text-lg font-bold text-secondary">{{ $trip->formatted_amount }}</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-sm text-gray-600 mb-1">Route:</p>
+                                            <p class="font-medium text-primary">{{ $trip->from_location }} → {{ $trip->to_location }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600 mb-1">Departure:</p>
+                                            <p class="font-medium text-primary">{{ $trip->departure_time->format('M d, Y - g:i A') }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-4 mt-3 text-sm text-gray-600">
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                            </svg>
+                                            {{ $trip->booked_seats }}/{{ $trip->available_seats }} seats
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2 mt-4 lg:mt-0">
+                                    @if($trip->status === 'scheduled')
+                                        <!-- Edit Button -->
+                                        <a href="{{ route('driver.trips.edit', $trip) }}" 
+                                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
+                                           title="Edit Trip">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                            Edit
+                                        </a>
+
+                                        @if($trip->booked_seats == 0)
+                                            <!-- Delete Button -->
+                                            <form method="POST" action="{{ route('driver.trips.destroy', $trip) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this trip? This action cannot be undone.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
+                                                        title="Delete Trip">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        <!-- Start Trip Button -->
+                                        <form method="POST" action="{{ route('driver.trips.update-status', $trip) }}" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="in_progress">
+                                            <button type="submit" 
+                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
+                                                    title="Start Trip">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h2m3 0h2M12 3v18"></path>
+                                                </svg>
+                                                Start
+                                            </button>
+                                        </form>
+                                    @elseif($trip->status === 'in_progress')
+                                        <!-- Complete Trip Button -->
+                                        <form method="POST" action="{{ route('driver.trips.update-status', $trip) }}" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="completed">
+                                            <button type="submit" 
+                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
+                                                    title="Complete Trip">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                Complete
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             <!-- Quick Actions -->
             <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 fade-in stagger-4">
                 <div class="dashboard-card text-center p-6 group cursor-pointer">

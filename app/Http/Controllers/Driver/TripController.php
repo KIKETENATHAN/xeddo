@@ -156,4 +156,27 @@ class TripController extends Controller
 
         return redirect()->route('driver.trips.index')->with('success', 'Trip status updated successfully!');
     }
+
+    public function destroy(Trip $trip)
+    {
+        $user = Auth::user();
+        $driverProfile = $user->driverProfile;
+        
+        if (!$driverProfile || $trip->driver_id !== $driverProfile->id) {
+            abort(403, 'Unauthorized access to this trip.');
+        }
+
+        // Only allow deletion of scheduled trips with no bookings
+        if ($trip->status !== 'scheduled') {
+            return redirect()->route('driver.trips.index')->with('error', 'Only scheduled trips can be deleted.');
+        }
+
+        if ($trip->booked_seats > 0) {
+            return redirect()->route('driver.trips.index')->with('error', 'Cannot delete trip with existing bookings.');
+        }
+
+        $trip->delete();
+
+        return redirect()->route('driver.trips.index')->with('success', 'Trip deleted successfully!');
+    }
 }

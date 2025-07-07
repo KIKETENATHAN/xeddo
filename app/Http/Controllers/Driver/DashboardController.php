@@ -28,6 +28,14 @@ class DashboardController extends Controller
         $completedTrips = $driverProfile->trips()->where('status', 'completed')->count();
         $totalEarnings = $driverProfile->trips()->where('status', 'completed')->sum('amount');
 
+        // Get recent trips for quick actions
+        $recentTrips = $driverProfile->trips()
+            ->with('sacco')
+            ->whereIn('status', ['scheduled', 'in_progress'])
+            ->orderBy('departure_time', 'asc')
+            ->limit(3)
+            ->get();
+
         $stats = [
             'total_trips' => $totalTrips,
             'active_trips' => $activeTrips,
@@ -38,7 +46,7 @@ class DashboardController extends Controller
             'is_available' => $driverProfile->is_available,
         ];
 
-        return view('driver.dashboard', compact('driverProfile', 'stats'));
+        return view('driver.dashboard', compact('driverProfile', 'stats', 'recentTrips'));
     }
 
     public function createProfile()
