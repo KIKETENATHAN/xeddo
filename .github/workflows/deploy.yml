@@ -21,7 +21,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ../xeddo/
+          server-dir: xeddo/
           local-dir: ./xeddo/
           dangerous-clean-slate: true
           log-level: verbose
