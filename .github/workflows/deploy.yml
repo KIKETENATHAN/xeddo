@@ -28,30 +28,31 @@ jobs:
       - name: Create deployment structure
         run: |
           mkdir -p deployment_temp/laravel_app
-          mkdir -p deployment_temp/public_html
           mkdir -p deployment_temp/www
           
           # Copy all Laravel files except public folder (INCLUDE vendor!)
-          rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' ./ deployment_temp/laravel_app/
+          rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' ./ deployment_temp/laravel_app/
           
-          # Copy public folder contents to both possible web roots
-          cp -r public/* deployment_temp/public_html/
+          # Verify vendor folder exists after copy
+          if [ -d "deployment_temp/laravel_app/vendor" ]; then
+            echo "✅ Vendor folder successfully copied"
+            ls -la deployment_temp/laravel_app/vendor/ | head -10
+          else
+            echo "❌ Vendor folder missing after copy!"
+            echo "Available directories in laravel_app:"
+            ls -la deployment_temp/laravel_app/
+          fi
+          
+          # Copy public folder contents to www (confirmed correct location)
           cp -r public/* deployment_temp/www/
           
-          # Copy the special index.php for shared hosting to both locations
-          cp index_for_public_html.php deployment_temp/public_html/index.php
+          # Copy the special index.php for shared hosting
           cp index_for_public_html.php deployment_temp/www/index.php
           
-          # Copy diagnostic and test files to both locations
-          cp diagnostic.php deployment_temp/public_html/diagnostic.php
+          # Copy diagnostic and test files
           cp diagnostic.php deployment_temp/www/diagnostic.php
-          cp test.php deployment_temp/public_html/test.php
           cp test.php deployment_temp/www/test.php
-          cp verify.php deployment_temp/public_html/verify.php
           cp verify.php deployment_temp/www/verify.php
-          
-          # Create a simple test file in root to verify deployment
-          echo "<?php echo 'Deployment successful! Current time: ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/deployment_test.php
           
           # Create .env file for production
           cat > deployment_temp/laravel_app/.env << 'EOF'
