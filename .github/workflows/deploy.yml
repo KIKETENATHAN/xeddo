@@ -46,6 +46,8 @@ jobs:
           if [ -d "vendor" ]; then
             echo "✅ Vendor directory found locally"
             ls -la vendor/ | head -5
+            echo "Checking for autoload.php:"
+            ls -la vendor/autoload.php
           else
             echo "❌ Vendor directory not found locally!"
             exit 1
@@ -63,6 +65,16 @@ jobs:
           cp artisan deployment_temp/xeddo/
           cp composer.json deployment_temp/xeddo/
           cp composer.lock deployment_temp/xeddo/
+          
+          # Verify vendor was copied successfully
+          if [ -f "deployment_temp/xeddo/vendor/autoload.php" ]; then
+            echo "✅ Vendor/autoload.php successfully copied to deployment"
+            ls -la deployment_temp/xeddo/vendor/ | head -5
+          else
+            echo "❌ Vendor/autoload.php missing in deployment!"
+            ls -la deployment_temp/xeddo/
+            exit 1
+          fi
           
           # Copy public files directly to deployment_temp root (goes to public_html/ via FTP)
           cp -r public/* deployment_temp/
