@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Dashboard - Xeddo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -283,6 +284,76 @@
             background-clip: text;
             font-weight: 800;
         }
+
+        /* Notification styles */
+        .notification-bell {
+            position: relative;
+            display: inline-block;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .notification-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .notification-item.unread {
+            background-color: #eff6ff;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .notification-empty {
+            padding: 2rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
     </style>
 </head>
 <body class="hero-section">
@@ -309,6 +380,90 @@
                     </div>
                     <!-- Desktop menu -->
                     <div class="hidden md:flex items-center space-x-4">
+                        <!-- Notification Bell -->
+                        <div class="notification-bell relative">
+                            <button id="notification-bell" class="p-2 text-primary hover:text-primary-dark rounded-lg hover:bg-blue-50 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-3.405-3.405A2.032 2.032 0 0116 11.845V8a4 4 0 11-8 0v3.845c0 .425-.138.817-.405 1.155L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                @if($unreadNotificationsCount > 0)
+                                    <span class="notification-badge">{{ $unreadNotificationsCount }}</span>
+                                @endif
+                            </button>
+                            <!-- Notification Dropdown -->
+                            <div id="notification-dropdown" class="notification-dropdown">
+                                <div class="p-3 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-800">Notifications</h3>
+                                        @if($unreadNotificationsCount > 0)
+                                            <button id="mark-all-read" class="text-sm text-blue-600 hover:text-blue-800">
+                                                Mark all read
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div id="notifications-list">
+                                    @forelse($notifications as $notification)
+                                        <div class="notification-item {{ !$notification->is_read ? 'unread' : '' }}" 
+                                             data-notification-id="{{ $notification->id }}">
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    @if($notification->type === 'trip_accepted')
+                                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </div>
+                                                    @elseif($notification->type === 'trip_rejected')
+                                                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                                            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                            </svg>
+                                                        </div>
+                                                    @elseif($notification->type === 'trip_started')
+                                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                                            </svg>
+                                                        </div>
+                                                    @elseif($notification->type === 'trip_completed')
+                                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900">
+                                                        {{ $notification->message }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 mt-1">
+                                                        {{ $notification->created_at->diffForHumans() }}
+                                                    </p>
+                                                </div>
+                                                @if(!$notification->is_read)
+                                                    <div class="flex-shrink-0">
+                                                        <button class="mark-as-read text-xs text-blue-600 hover:text-blue-800"
+                                                                data-notification-id="{{ $notification->id }}">
+                                                            Mark read
+                                                        </button>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="notification-empty">
+                                            <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-3.405-3.405A2.032 2.032 0 0116 11.845V8a4 4 0 11-8 0v3.845c0 .425-.138.817-.405 1.155L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                            </svg>
+                                            <p class="text-sm">No notifications yet</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 bg-gradient-gold rounded-full flex items-center justify-center">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,6 +483,18 @@
                 <!-- Mobile menu -->
                 <div id="mobile-menu" class="md:hidden hidden border-t border-blue-100 bg-white/95 backdrop-blur-md">
                     <div class="px-2 pt-2 pb-3 space-y-1">
+                        <!-- Mobile Notifications -->
+                        <div class="px-3 py-2 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-primary">Notifications</span>
+                                @if($unreadNotificationsCount > 0)
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                        {{ $unreadNotificationsCount }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        
                         <div class="flex items-center space-x-3 px-3 py-2">
                             <div class="w-8 h-8 bg-gradient-gold rounded-full flex items-center justify-center">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -596,6 +763,114 @@
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0) scale(1)';
             });
+        });
+
+        // Notification functionality
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationDropdown = document.getElementById('notification-dropdown');
+        const markAllReadBtn = document.getElementById('mark-all-read');
+
+        // Toggle notification dropdown
+        if (notificationBell) {
+            notificationBell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('show');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!notificationDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
+                notificationDropdown.classList.remove('show');
+            }
+        });
+
+        // Mark all notifications as read
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', function() {
+                fetch('{{ route("admin.notifications.mark-all-read") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove unread styling from all notifications
+                        document.querySelectorAll('.notification-item.unread').forEach(item => {
+                            item.classList.remove('unread');
+                        });
+                        
+                        // Remove "Mark read" buttons
+                        document.querySelectorAll('.mark-as-read').forEach(btn => {
+                            btn.remove();
+                        });
+                        
+                        // Hide notification badge
+                        const badge = document.querySelector('.notification-badge');
+                        if (badge) {
+                            badge.style.display = 'none';
+                        }
+                        
+                        // Hide "Mark all read" button
+                        markAllReadBtn.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notifications as read:', error);
+                });
+            });
+        }
+
+        // Mark individual notification as read
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('mark-as-read')) {
+                const notificationId = e.target.getAttribute('data-notification-id');
+                
+                fetch('{{ route("admin.notifications.mark-read") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        notification_id: notificationId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove unread styling from this notification
+                        const notificationItem = document.querySelector(`[data-notification-id="${notificationId}"]`);
+                        notificationItem.classList.remove('unread');
+                        
+                        // Remove "Mark read" button
+                        e.target.remove();
+                        
+                        // Update badge count
+                        const badge = document.querySelector('.notification-badge');
+                        if (badge) {
+                            const currentCount = parseInt(badge.textContent);
+                            if (currentCount <= 1) {
+                                badge.style.display = 'none';
+                            } else {
+                                badge.textContent = currentCount - 1;
+                            }
+                        }
+                        
+                        // Check if there are any unread notifications left
+                        const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+                        if (unreadCount === 0 && markAllReadBtn) {
+                            markAllReadBtn.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
+                });
+            }
         });
     </script>
 </body>

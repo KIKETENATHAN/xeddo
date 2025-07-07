@@ -67,6 +67,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/drivers/{driver}/approve', [AdminDashboardController::class, 'approveDriver'])->name('drivers.approve');
     Route::patch('/drivers/{driver}/reject', [AdminDashboardController::class, 'rejectDriver'])->name('drivers.reject');
     
+    // Notification routes
+    Route::post('/notifications/mark-read', [AdminDashboardController::class, 'markNotificationAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [AdminDashboardController::class, 'markAllNotificationsAsRead'])->name('notifications.mark-all-read');
+    Route::get('/notifications', [AdminDashboardController::class, 'getNotifications'])->name('notifications.index');
+    
     // SACCO management routes
     Route::resource('saccos', SaccoController::class);
     

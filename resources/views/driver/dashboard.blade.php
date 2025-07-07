@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Driver Dashboard - Xeddo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -177,23 +178,6 @@
             margin-bottom: 1rem;
         }
 
-        .hero-section {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(30,58,138,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
-        }
-
         .floating-animation {
             animation: float 6s ease-in-out infinite;
         }
@@ -302,10 +286,9 @@
         }
     </style>
 </head>
-<body class="hero-section">
-    <div class="relative z-10">
-        <!-- Navigation -->
-        <nav class="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-blue-100">
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-blue-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
@@ -326,6 +309,44 @@
                     </div>
                     <!-- Desktop menu -->
                     <div class="hidden md:flex items-center space-x-4">
+                        <!-- Notification Bell -->
+                        <div class="notification-bell relative mr-4" onclick="toggleNotifications()">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            @if($newNotificationsCount > 0)
+                            <span class="notification-badge">{{ $newNotificationsCount }}</span>
+                            @endif
+                            
+                            <!-- Notification Dropdown -->
+                            <div id="notifications-dropdown" class="notification-dropdown hidden">
+                                <div class="p-4 border-b border-gray-200">
+                                    <h3 class="font-semibold text-gray-900">New Trip Assignments</h3>
+                                </div>
+                                @if($pendingTrips->count() > 0)
+                                    @foreach($pendingTrips as $trip)
+                                    <div class="p-3 border-b border-gray-100 hover:bg-gray-50">
+                                        <div class="flex justify-between items-start">
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-gray-900">{{ $trip->from_location }} → {{ $trip->to_location }}</p>
+                                                <p class="text-xs text-gray-500">{{ $trip->departure_time->format('M d, Y H:i') }}</p>
+                                                <p class="text-xs text-blue-600">{{ $trip->formatted_amount }}</p>
+                                            </div>
+                                            <div class="flex space-x-1">
+                                                <button onclick="acceptTrip({{ $trip->id }})" class="btn-accept">Accept</button>
+                                                <button onclick="rejectTrip({{ $trip->id }})" class="btn-reject">Reject</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                @else
+                                    <div class="p-4 text-center text-gray-500">
+                                        <p>No new trip assignments</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 bg-gradient-gold rounded-full flex items-center justify-center">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -334,6 +355,9 @@
                             </div>
                             <span class="text-primary font-medium">Welcome, {{ auth()->user()->name }}</span>
                         </div>
+                        <a href="{{ route('driver.trips.index') }}" class="text-primary hover:text-primary-dark px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+                            My Trips
+                        </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="text-primary hover:text-primary-dark px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium">
@@ -345,6 +369,19 @@
                 <!-- Mobile menu -->
                 <div id="mobile-menu" class="md:hidden hidden border-t border-blue-100 bg-white/95 backdrop-blur-md">
                     <div class="px-2 pt-2 pb-3 space-y-1">
+                        <!-- Mobile Notification Bell -->
+                        <div class="flex items-center justify-between px-3 py-2">
+                            <span class="text-primary font-medium">Notifications</span>
+                            <div class="notification-bell relative" onclick="toggleNotifications()">
+                                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                @if($newNotificationsCount > 0)
+                                <span class="notification-badge">{{ $newNotificationsCount }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        
                         <div class="flex items-center space-x-3 px-3 py-2">
                             <div class="w-8 h-8 bg-gradient-gold rounded-full flex items-center justify-center">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -353,6 +390,9 @@
                             </div>
                             <span class="text-primary font-medium">Welcome, {{ auth()->user()->name }}</span>
                         </div>
+                        <a href="{{ route('driver.trips.index') }}" class="block px-3 py-2 rounded-lg text-primary hover:bg-blue-50 transition-colors font-medium">
+                            My Trips
+                        </a>
                         <form method="POST" action="{{ route('logout') }}" class="block">
                             @csrf
                             <button type="submit" class="w-full text-left px-3 py-2 rounded-lg text-primary hover:bg-blue-50 transition-colors font-medium">
@@ -365,7 +405,7 @@
         </nav>
 
         <!-- Main Content -->
-        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 relative z-10 debug-height">
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 debug-height">
             @if(session('success'))
                 <div class="mb-6 success-alert fade-in">
                     <div class="flex items-center">
@@ -747,7 +787,7 @@
                 </div>
             </div>
         </main>
-    </div>
+
     <script>
         // Debug scrolling issue
         console.log('Page height:', document.body.scrollHeight);
@@ -906,6 +946,74 @@
             
             html += '</div>';
             completedTripsContent.innerHTML = html;
+        }
+        
+        // Notification bell functionality
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notifications-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close notifications when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notifications-dropdown');
+            const bell = document.querySelector('.notification-bell');
+            
+            if (!bell.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        function acceptTrip(tripId) {
+            if (!confirm('Are you sure you want to accept this trip?')) {
+                return;
+            }
+
+            fetch(`/driver/trips/${tripId}/accept`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || 'Failed to accept trip');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while accepting the trip');
+            });
+        }
+
+        function rejectTrip(tripId) {
+            if (!confirm('Are you sure you want to reject this trip? The admin will be notified to reassign it.')) {
+                return;
+            }
+
+            fetch(`/driver/trips/${tripId}/reject`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.error || 'Failed to reject trip');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while rejecting the trip');
+            });
         }
         
         // Add some test content to ensure scrolling works

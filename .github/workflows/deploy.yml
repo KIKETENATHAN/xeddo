@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Debug Secrets
         run: |
-          echo "FTP Host: ${{ secrets.FTP_HOST }}"
+          echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
 
       - name: Checkout Code
@@ -22,19 +22,14 @@ jobs:
         
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}   # <-- Make sure this is present
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./deployment/xeddo/
-        server-dir: /xeddo/
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          **/tests/**
-          # server: ${{ secrets.FTP_HOST }}
-          # username: ${{ secrets.FTP_USERNAME }}
-          # password: ${{ secrets.FTP_PASSWORD }}
-          # server-dir: ${{ secrets.FTP_REMOTE_DIR }}
-          # local-dir: ./
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./deployment/xeddo/
+          server-dir: /xeddo/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**

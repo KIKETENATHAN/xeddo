@@ -139,8 +139,6 @@ class DashboardController extends Controller
                     'available_seats' => $trip->available_seats,
                     'sacco_name' => $trip->sacco->name,
                     'status' => $trip->status,
-                    'can_delete' => true, // Completed trips can always be deleted
-                    'delete_url' => route('driver.trips.destroy', $trip)
                 ];
             });
 

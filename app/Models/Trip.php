@@ -34,6 +34,11 @@ class Trip extends Model
         return $this->belongsTo(DriverProfile::class, 'driver_id');
     }
 
+    public function user()
+    {
+        return $this->hasOneThrough(User::class, DriverProfile::class, 'id', 'id', 'driver_id', 'user_id');
+    }
+
     public function sacco()
     {
         return $this->belongsTo(Sacco::class);

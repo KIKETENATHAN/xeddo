@@ -8,6 +8,7 @@ use App\Models\DriverProfile;
 use App\Models\PassengerProfile;
 use App\Models\Sacco;
 use App\Models\Trip;
+use App\Models\AdminNotification;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -23,6 +24,14 @@ class DashboardController extends Controller
         $totalTrips = Trip::count();
         $activeTrips = Trip::whereIn('status', ['scheduled', 'in_progress'])->count();
 
+        // Get admin notifications
+        $notifications = AdminNotification::with(['trip.user', 'trip.sacco'])
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+        
+        $unreadNotificationsCount = AdminNotification::where('read', false)->count();
+
         return view('admin.dashboard', compact(
             'totalUsers',
             'totalDrivers',
@@ -31,7 +40,9 @@ class DashboardController extends Controller
             'activeDrivers',
             'totalSaccos',
             'totalTrips',
-            'activeTrips'
+            'activeTrips',
+            'notifications',
+            'unreadNotificationsCount'
         ));
     }
 
@@ -57,5 +68,32 @@ class DashboardController extends Controller
     {
         $driver->update(['status' => 'rejected']);
         return redirect()->back()->with('success', 'Driver rejected successfully!');
+    }
+
+    public function markNotificationAsRead(AdminNotification $notification)
+    {
+        $notification->update(['is_read' => true]);
+        return response()->json(['success' => true]);
+    }
+
+    public function markAllNotificationsAsRead()
+    {
+        AdminNotification::where('is_read', false)->update(['is_read' => true]);
+        return response()->json(['success' => true]);
+    }
+
+    public function getNotifications()
+    {
+        $notifications = AdminNotification::with(['trip.user', 'trip.sacco'])
+            ->orderBy('created_at', 'desc')
+            ->take(20)
+            ->get();
+        
+        $unreadCount = AdminNotification::where('is_read', false)->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unreadCount' => $unreadCount
+        ]);
     }
 }
