@@ -55,9 +55,9 @@ class DashboardController extends Controller
         }
 
         $request->validate([
-            'sacco_id' => 'required|exists:saccos,id',
             'pickup' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
+            'travel_time' => 'required|date|after:now',
         ]);
 
         $user = Auth::user();
@@ -72,12 +72,11 @@ class DashboardController extends Controller
             'rating' => $passengerProfile->rating,
         ];
 
-        // Get active SACCOs for booking
+        // Get active SACCOs for display
         $saccos = Sacco::where('is_active', true)->get();
 
-        // Search for available trips
+        // Search for available trips across all SACCOs
         $trips = Trip::with(['driver.user', 'sacco'])
-            ->where('sacco_id', $request->sacco_id)
             ->where('status', 'scheduled')
             ->where('available_seats', '>', 0)
             ->where(function ($query) use ($request) {
@@ -88,15 +87,16 @@ class DashboardController extends Controller
                 $query->where('to_location', 'LIKE', '%' . $request->destination . '%')
                       ->orWhere('to_location', 'LIKE', '%' . strtolower($request->destination) . '%');
             })
-            ->where('departure_time', '>', now())
+            ->whereDate('departure_time', '>=', date('Y-m-d', strtotime($request->travel_time)))
+            ->where('departure_time', '>=', $request->travel_time)
             ->orderBy('departure_time')
             ->get();
 
         // Keep search parameters for the form
         $searchParams = [
-            'sacco_id' => $request->sacco_id,
             'pickup' => $request->pickup,
             'destination' => $request->destination,
+            'travel_time' => $request->travel_time,
         ];
 
         return view('passenger.dashboard', compact('passengerProfile', 'stats', 'saccos', 'trips', 'searchParams'));

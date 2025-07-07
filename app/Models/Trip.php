@@ -39,6 +39,11 @@ class Trip extends Model
         return $this->belongsTo(Sacco::class);
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
     public function getRemainingSeatsAttribute()
     {
         return $this->available_seats - $this->booked_seats;

@@ -653,7 +653,7 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6 fade-in stagger-4">
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 fade-in stagger-4">
                 <div class="dashboard-card text-center p-6 group cursor-pointer">
                     <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -664,39 +664,29 @@
                     <p class="text-gray-600 text-sm">View your daily and weekly earnings</p>
                 </div>
 
-                <button id="completedTripsBtn" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline border-none bg-white">
-                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Completed Trips</h4>
-                    <p class="text-gray-600 text-sm">View and manage completed trips</p>
-                </button>
-
-                <a href="{{ route('driver.trips.create') }}" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline">
+                <a href="{{ route('driver.trips.index') }}" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline">
                     <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                        </svg>
-                    </div>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Start Trip</h4>
-                    <p class="text-gray-600 text-sm">Create a new trip for passengers</p>
-                </a>
-
-                <a href="{{ route('driver.trips.index') }}" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline">
-                    <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <h4 class="text-lg font-semibold text-primary mb-2">All Trips</h4>
-                    <p class="text-gray-600 text-sm">View and manage all your trips</p>
+                    <h4 class="text-lg font-semibold text-primary mb-2">My Trips</h4>
+                    <p class="text-gray-600 text-sm">View and manage assigned trips</p>
                 </a>
+
+                <div class="dashboard-card text-center p-6 group cursor-pointer">
+                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Support</h4>
+                    <p class="text-gray-600 text-sm">Contact admin for help</p>
+                </div>
             </div>
 
             <!-- Completed Trips Modal -->
-            <div id="completedTripsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div id="completedTripsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
                 <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
                     <!-- Modal Header -->
                     <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex items-center justify-between">
@@ -736,16 +726,6 @@
                     <p class="text-gray-600 text-sm">View your daily and weekly earnings</p>
                 </div>
 
-                <a href="{{ route('driver.trips.create') }}" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline">
-                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                        </svg>
-                    </div>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Start Trip</h4>
-                    <p class="text-gray-600 text-sm">Create a new trip for passengers</p>
-                </a>
-
                 <a href="{{ route('driver.trips.index') }}" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline">
                     <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -753,8 +733,18 @@
                         </svg>
                     </div>
                     <h4 class="text-lg font-semibold text-primary mb-2">My Trips</h4>
-                    <p class="text-gray-600 text-sm">View and manage your trips</p>
+                    <p class="text-gray-600 text-sm">View and manage assigned trips</p>
                 </a>
+
+                <div class="dashboard-card text-center p-6 group cursor-pointer">
+                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Support</h4>
+                    <p class="text-gray-600 text-sm">Contact admin for help</p>
+                </div>
             </div>
         </main>
     </div>

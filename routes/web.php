@@ -15,15 +15,27 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// API routes for ride search (public access)
-Route::get('/api/saccos', [RideSearchController::class, 'getSaccos']);
-Route::post('/api/search-rides', [RideSearchController::class, 'searchRides']);
-
-// API routes for booking and payment (public access)
-Route::post('/api/initiate-booking', [PaymentController::class, 'initiateBooking']);
-Route::post('/api/check-payment-status', [PaymentController::class, 'checkPaymentStatus']);
-Route::post('/api/mpesa-callback', [PaymentController::class, 'mpesaCallback']);
-Route::get('/api/receipt/{booking}', [PaymentController::class, 'getReceipt']);
+// API routes for ride search (public access, no CSRF)
+Route::group(['prefix' => 'api'], function () {
+    Route::get('/saccos', [RideSearchController::class, 'getSaccos']);
+    Route::post('/search-rides', [RideSearchController::class, 'searchRides']);
+    
+    // Test route to check if trips exist
+    Route::get('/test-trips', function() {
+        $trips = \App\Models\Trip::with(['driver.user', 'sacco'])->take(5)->get();
+        return response()->json([
+            'success' => true,
+            'count' => $trips->count(),
+            'trips' => $trips
+        ]);
+    });
+    
+    // API routes for booking and payment (public access)
+    Route::post('/initiate-booking', [PaymentController::class, 'initiateBooking']);
+    Route::post('/check-payment-status', [PaymentController::class, 'checkPaymentStatus']);
+    Route::post('/mpesa-callback', [PaymentController::class, 'mpesaCallback']);
+    Route::get('/receipt/{booking}', [PaymentController::class, 'getReceipt']);
+});
 Route::get('/receipt/{booking}', [PaymentController::class, 'getReceiptView'])->name('receipt.view');
 
 // Registration routes
@@ -57,6 +69,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     // SACCO management routes
     Route::resource('saccos', SaccoController::class);
+    
+    // Trip management routes
+    Route::resource('trips', \App\Http\Controllers\Admin\TripController::class);
+    Route::patch('/trips/{trip}/status', [\App\Http\Controllers\Admin\TripController::class, 'updateStatus'])->name('trips.update-status');
 });
 
 // Driver routes
@@ -69,9 +85,11 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->g
     Route::patch('/profile', [DriverDashboardController::class, 'updateProfile'])->name('profile.update');
     Route::patch('/toggle-availability', [DriverDashboardController::class, 'toggleAvailability'])->name('toggle.availability');
     
-    // Trip management routes
-    Route::resource('trips', TripController::class);
-    Route::patch('/trips/{trip}/status', [TripController::class, 'updateStatus'])->name('trips.update-status');
+    // Trip viewing and status management for drivers
+    Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
+    Route::patch('/trips/{trip}/accept', [TripController::class, 'acceptTrip'])->name('trips.accept');
+    Route::patch('/trips/{trip}/start', [TripController::class, 'startTrip'])->name('trips.start');
+    Route::patch('/trips/{trip}/complete', [TripController::class, 'completeTrip'])->name('trips.complete');
 });
 
 // Passenger routes

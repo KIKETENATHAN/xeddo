@@ -849,20 +849,6 @@
                 <!-- Search Form -->
                 <form id="searchForm" class="space-y-6 mb-8">
                     <div>
-                        <label for="modal-sacco" class="block text-sm font-semibold text-primary mb-2">Select SACCO</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                            </div>
-                            <select id="modal-sacco" name="sacco_id" class="form-input pl-10" required>
-                                <option value="">Choose a SACCO</option>
-                                <!-- SACCOs will be populated via JavaScript -->
-                            </select>
-                        </div>
-                    </div>
-                    <div>
                         <label for="modal-pickup" class="block text-sm font-semibold text-primary mb-2">Pickup Location</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -885,11 +871,22 @@
                             <input type="text" id="modal-destination" name="destination" class="form-input pl-10" placeholder="Enter destination" required>
                         </div>
                     </div>
+                    <div>
+                        <label for="modal-time" class="block text-sm font-semibold text-primary mb-2">Travel Time</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <input type="datetime-local" id="modal-time" name="travel_time" class="form-input pl-10" required>
+                        </div>
+                    </div>
                     <button type="submit" class="btn-secondary w-full">
                         <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        Find Available Rides
+                        Find Available Rides from All SACCOs
                     </button>
                 </form>
 
@@ -947,7 +944,7 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold text-primary mb-2">No Rides Found</h3>
-                        <p class="text-gray-600 mb-4">Sorry, no rides match your search criteria. Try adjusting your pickup location or destination.</p>
+                        <p class="text-gray-600 mb-4">Sorry, no rides match your search criteria. Try adjusting your pickup location, destination, or travel time.</p>
                         <button onclick="resetSearch()" class="btn-primary">
                             Try Another Search
                         </button>
@@ -1095,7 +1092,10 @@
         function openBookingModal() {
             document.getElementById('bookingModal').classList.add('active');
             document.body.style.overflow = 'hidden';
-            loadSaccos();
+            // Set minimum time to current date and time
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('modal-time').min = now.toISOString().slice(0, 16);
         }
 
         function closeBookingModal() {
@@ -1137,10 +1137,12 @@
             
             const formData = new FormData(this);
             const searchData = {
-                sacco_id: formData.get('sacco_id'),
                 pickup: formData.get('pickup'),
-                destination: formData.get('destination')
+                destination: formData.get('destination'),
+                travel_time: formData.get('travel_time')
             };
+
+            console.log('Search data:', searchData); // Debug log
 
             // Show loading indicator
             document.getElementById('loadingIndicator').classList.add('active');
@@ -1148,6 +1150,8 @@
             document.getElementById('noResults').style.display = 'none';
 
             try {
+                console.log('Making request to /api/search-rides'); // Debug log
+                
                 const response = await fetch('/api/search-rides', {
                     method: 'POST',
                     headers: {
@@ -1157,7 +1161,10 @@
                     body: JSON.stringify(searchData)
                 });
 
+                console.log('Response status:', response.status); // Debug log
+                
                 const result = await response.json();
+                console.log('API response:', result); // Debug log
                 
                 // Hide loading indicator
                 document.getElementById('loadingIndicator').classList.remove('active');
@@ -1165,6 +1172,7 @@
                 if (result.success && result.trips.length > 0) {
                     displayResults(result.trips);
                 } else {
+                    console.log('No trips found or API returned error'); // Debug log
                     document.getElementById('noResults').style.display = 'block';
                 }
             } catch (error) {

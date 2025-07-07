@@ -17,15 +17,18 @@ class RideSearchController extends Controller
 
     public function searchRides(Request $request)
     {
+        \Log::info('Search request received', $request->all());
+        
         $request->validate([
-            'sacco_id' => 'required|exists:saccos,id',
             'pickup' => 'required|string|max:255',
             'destination' => 'required|string|max:255',
+            'travel_time' => 'required|date',
         ]);
 
-        // Search for available trips
+        \Log::info('Validation passed');
+
+        // Search for available trips across all SACCOs
         $trips = Trip::with(['driver.user', 'sacco'])
-            ->where('sacco_id', $request->sacco_id)
             ->where('status', 'scheduled')
             ->where('available_seats', '>', 0)
             ->where(function ($query) use ($request) {
@@ -36,9 +39,11 @@ class RideSearchController extends Controller
                 $query->where('to_location', 'LIKE', '%' . $request->destination . '%')
                       ->orWhere('to_location', 'LIKE', '%' . strtolower($request->destination) . '%');
             })
-            ->where('departure_time', '>', now())
+            ->where('departure_time', '>=', $request->travel_time)
             ->orderBy('departure_time')
             ->get();
+
+        \Log::info('Query completed', ['count' => $trips->count()]);
 
         // Add remaining seats and formatted amount to each trip
         $trips->transform(function ($trip) {
