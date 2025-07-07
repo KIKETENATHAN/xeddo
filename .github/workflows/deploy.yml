@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: xeddo/
           local-dir: ./xeddo/
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
           log-level: verbose
 
       # ✅ Upload Laravel public to /home/xeddotra/public_html/
