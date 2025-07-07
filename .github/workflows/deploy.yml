@@ -30,7 +30,7 @@ jobs:
             **/node_modules/**
             **/.env
 
-      # ✅ Upload Laravel public to /public_html/
+      # ✅ Upload Laravel public to /public_html/ sample
       - name: 🌐 Upload Laravel Public to /public_html/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
