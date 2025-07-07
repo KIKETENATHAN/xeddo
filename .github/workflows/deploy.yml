@@ -27,24 +27,24 @@ jobs:
 
       - name: Create deployment structure
         run: |
-          echo "🔍 Creating optimized deployment structure..."
+          echo "🔍 Creating optimized deployment structure for public_html..."
           
-          # Create the correct paths based on discovery
-          mkdir -p deployment_temp/public_html
+          # Create the correct paths - FTP_REMOTE_DIR is public_html/
+          mkdir -p deployment_temp
           mkdir -p deployment_temp/xeddo
           
-          # Copy Laravel files to xeddo directory (your server location)
+          # Copy Laravel files to xeddo directory
           rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' ./ deployment_temp/xeddo/
           
-          # Copy public files to public_html (your domain root)
-          cp -r public/* deployment_temp/public_html/
+          # Copy public files directly to deployment_temp root (goes to public_html/ via FTP)
+          cp -r public/* deployment_temp/
           
-          # Copy the correct index.php to public_html
-          cp index_for_public_html.php deployment_temp/public_html/index.php
+          # Copy the correct index.php to deployment_temp root
+          cp index_for_public_html.php deployment_temp/index.php
           
-          # Copy diagnostic files
-          cp diagnostic.php deployment_temp/public_html/diagnostic.php
-          cp verify.php deployment_temp/public_html/verify.php
+          # Copy diagnostic files to deployment_temp root
+          cp diagnostic.php deployment_temp/diagnostic.php
+          cp verify.php deployment_temp/verify.php
           
           # Create .env file for production
           cat > deployment_temp/xeddo/.env << 'EOF'
@@ -82,12 +82,7 @@ jobs:
           
           # Show final structure
           echo "📁 Final deployment structure:"
-          find deployment_temp -type f -name "*.php" | grep -E "(index|diagnostic)" | head -10
-        
-          
-          # Create a simple test file to verify deployment path
-          echo "<?php echo 'FTP Test: ' . __DIR__ . ' at ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/ftp_test.php
-          echo "<?php echo 'PUBLIC HTML Test: ' . __DIR__ . ' at ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/public_html/public_test.php
+          find deployment_temp -maxdepth 2 -name "*.php" | head -10
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
