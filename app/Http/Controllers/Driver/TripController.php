@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Driver;
 
 use App\Http\Controllers\Controller;
 use App\Models\Trip;
+use App\Models\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -105,7 +106,8 @@ class TripController extends Controller
         // Accept the trip
         $trip->update(['status' => 'scheduled']);
 
-        // TODO: Send notification to admin about trip acceptance
+        // Send notification to admin about trip acceptance
+        $this->notifyAdmin('Trip Accepted', "Driver {$driverProfile->user->name} has accepted the trip from {$trip->from_location} to {$trip->to_location} scheduled for {$trip->departure_time->format('M d, Y H:i')}.", $trip, $driverProfile);
 
         return response()->json([
             'success' => true,
@@ -137,7 +139,8 @@ class TripController extends Controller
             'status' => 'scheduled'
         ]);
 
-        // TODO: Send notification to admin about trip rejection
+        // Send notification to admin about trip rejection
+        $this->notifyAdmin('Trip Rejected', "Driver {$driverProfile->user->name} has rejected the trip from {$trip->from_location} to {$trip->to_location} scheduled for {$trip->departure_time->format('M d, Y H:i')}. Please reassign to another driver.", $trip, $driverProfile);
 
         return response()->json([
             'success' => true,
@@ -160,6 +163,9 @@ class TripController extends Controller
 
         $trip->update(['status' => 'in_progress']);
 
+        // Send notification to admin about trip start
+        $this->notifyAdmin('Trip Started', "Driver {$driverProfile->user->name} has started the trip from {$trip->from_location} to {$trip->to_location}.", $trip, $driverProfile);
+
         return response()->json([
             'success' => true,
             'message' => 'Trip started successfully! Admin will be notified.'
@@ -181,9 +187,27 @@ class TripController extends Controller
 
         $trip->update(['status' => 'completed']);
 
+        // Send notification to admin about trip completion
+        $this->notifyAdmin('Trip Completed', "Driver {$driverProfile->user->name} has completed the trip from {$trip->from_location} to {$trip->to_location}.", $trip, $driverProfile);
+
         return response()->json([
             'success' => true,
             'message' => 'Trip completed successfully! Admin will be notified.'
+        ]);
+    }
+
+    /**
+     * Send notification to admin about driver actions
+     */
+    private function notifyAdmin($title, $message, $trip = null, $driverProfile = null)
+    {
+        AdminNotification::create([
+            'title' => $title,
+            'message' => $message,
+            'type' => 'driver_action',
+            'trip_id' => $trip ? $trip->id : null,
+            'driver_id' => $driverProfile ? $driverProfile->id : null,
+            'read' => false
         ]);
     }
 }

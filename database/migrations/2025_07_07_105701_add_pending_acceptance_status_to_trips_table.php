@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('trips', function (Blueprint $table) {
-            //
+            // The status column should already support 'pending_acceptance'
+            // This migration ensures the status enum includes the new value
+            $table->string('status', 50)->default('pending_acceptance')->change();
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('trips', function (Blueprint $table) {
-            //
+            $table->string('status', 50)->default('scheduled')->change();
         });
     }
 };

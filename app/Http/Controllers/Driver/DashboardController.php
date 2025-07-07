@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Driver;
 use App\Http\Controllers\Controller;
 use App\Models\DriverProfile;
 use App\Models\Sacco;
+use App\Models\Trip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +29,13 @@ class DashboardController extends Controller
         $completedTrips = $driverProfile->trips()->where('status', 'completed')->count();
         $totalEarnings = $driverProfile->trips()->where('status', 'completed')->sum('amount');
 
+        // Get pending trips count for notifications
+        $pendingTrips = Trip::with('sacco')
+            ->where('driver_id', $driverProfile->id)
+            ->where('status', 'pending_acceptance')
+            ->get();
+        $newNotificationsCount = $pendingTrips->count();
+
         $stats = [
             'total_trips' => $totalTrips,
             'active_trips' => $activeTrips,
@@ -38,7 +46,7 @@ class DashboardController extends Controller
             'is_available' => $driverProfile->is_available,
         ];
 
-        return view('driver.dashboard', compact('driverProfile', 'stats'));
+        return view('driver.dashboard', compact('driverProfile', 'stats', 'pendingTrips', 'newNotificationsCount'));
     }
 
     public function createProfile()
