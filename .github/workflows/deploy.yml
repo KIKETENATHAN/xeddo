@@ -29,15 +29,31 @@ jobs:
         run: |
           mkdir -p deployment_temp/laravel_app
           mkdir -p deployment_temp/public_html
+          mkdir -p deployment_temp/www
+          mkdir -p deployment_temp/htdocs
           
           # Copy all Laravel files except public folder
           rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' ./ deployment_temp/laravel_app/
           
-          # Copy public folder contents to public_html
+          # Copy public folder contents to multiple possible web roots
           cp -r public/* deployment_temp/public_html/
+          cp -r public/* deployment_temp/www/
+          cp -r public/* deployment_temp/htdocs/
           
-          # Copy the special index.php for shared hosting
+          # Copy the special index.php for shared hosting to all locations
           cp index_for_public_html.php deployment_temp/public_html/index.php
+          cp index_for_public_html.php deployment_temp/www/index.php
+          cp index_for_public_html.php deployment_temp/htdocs/index.php
+          
+          # Copy diagnostic script to all locations
+          cp diagnostic.php deployment_temp/public_html/diagnostic.php
+          cp diagnostic.php deployment_temp/www/diagnostic.php
+          cp diagnostic.php deployment_temp/htdocs/diagnostic.php
+          
+          # Copy test file to all locations
+          cp test.php deployment_temp/public_html/test.php
+          cp test.php deployment_temp/www/test.php
+          cp test.php deployment_temp/htdocs/test.php
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
