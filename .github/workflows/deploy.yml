@@ -1,4 +1,4 @@
-name: 🚀 Deploy to Shared Hosting via FTP
+name: Deploy to Shared Hosting via FTP
 
 on:
   push:
@@ -15,11 +15,16 @@ jobs:
         run: |
           echo "FTP Server: ${{ secrets.FTP_SERVER }}"
           echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
+          if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
+            echo "ERROR: FTP_USERNAME secret is empty or not set!"
+            exit 1
+          else
+            echo "FTP_USERNAME secret is set"
+          fi
 
       - name: Checkout Code
         uses: actions/checkout@v3
 
-        
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
