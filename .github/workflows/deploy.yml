@@ -25,6 +25,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
+
+      - name: Install Dependencies
+        run: composer install --optimize-autoloader --no-dev
+
       - name: Create deployment structure
         run: |
           echo "🔍 Creating optimized deployment structure for public_html..."
@@ -33,7 +42,7 @@ jobs:
           mkdir -p deployment_temp
           mkdir -p deployment_temp/xeddo
           
-          # Copy Laravel files to xeddo directory
+          # Copy Laravel files to xeddo directory (including vendor)
           rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' ./ deployment_temp/xeddo/
           
           # Copy public files directly to deployment_temp root (goes to public_html/ via FTP)
