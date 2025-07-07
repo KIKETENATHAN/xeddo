@@ -1,4 +1,4 @@
-name: 🚀 Deploy Laravel App via FTP
+name: 🚀 Deploy Laravel App to cPanel via FTP
 
 on:
   push:
@@ -7,33 +7,33 @@ on:
 
 jobs:
   deploy:
-    name: Upload to cPanel Hosting
+    name: Upload Laravel to cPanel Hosting
     runs-on: ubuntu-latest
 
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
 
-      # ✅ Upload Laravel core to /home/xeddotra/xeddo/
-      - name: 📂 Upload xeddo (Laravel core) to /xeddo/
+      # ✅ Upload Laravel core to public_html/xeddo/
+      - name: 📂 Upload xeddo (Laravel app core) to /public_html/xeddo/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ../xeddo/
+          server-dir: xeddo/
           local-dir: ./xeddo/
           dangerous-clean-slate: true
           log-level: verbose
 
-      # ✅ Upload Laravel public to /home/xeddotra/public_html/
-      - name: 🌐 Upload public (Laravel public) to /public_html/
+      # ✅ Upload public/ to public_html/
+      - name: 🌐 Upload Laravel public folder to /public_html/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ./           # Already inside public_html
+          server-dir: ./
           local-dir: ./public/
           dangerous-clean-slate: true
           log-level: verbose
