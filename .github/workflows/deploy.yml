@@ -42,8 +42,27 @@ jobs:
           mkdir -p deployment_temp
           mkdir -p deployment_temp/xeddo
           
-          # Copy Laravel files to xeddo directory (including vendor)
-          rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' ./ deployment_temp/xeddo/
+          # Verify vendor exists before copying
+          if [ -d "vendor" ]; then
+            echo "✅ Vendor directory found locally"
+            ls -la vendor/ | head -5
+          else
+            echo "❌ Vendor directory not found locally!"
+            exit 1
+          fi
+          
+          # Copy all Laravel files to xeddo directory (explicitly include vendor)
+          cp -r app deployment_temp/xeddo/
+          cp -r bootstrap deployment_temp/xeddo/
+          cp -r config deployment_temp/xeddo/
+          cp -r database deployment_temp/xeddo/
+          cp -r resources deployment_temp/xeddo/
+          cp -r routes deployment_temp/xeddo/
+          cp -r storage deployment_temp/xeddo/
+          cp -r vendor deployment_temp/xeddo/
+          cp artisan deployment_temp/xeddo/
+          cp composer.json deployment_temp/xeddo/
+          cp composer.lock deployment_temp/xeddo/
           
           # Copy public files directly to deployment_temp root (goes to public_html/ via FTP)
           cp -r public/* deployment_temp/
