@@ -62,6 +62,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // Driver routes
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->group(function () {
     Route::get('/dashboard', [DriverDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/completed-trips', [DriverDashboardController::class, 'getCompletedTrips'])->name('completed.trips');
     Route::get('/profile/create', [DriverDashboardController::class, 'createProfile'])->name('profile.create');
     Route::post('/profile', [DriverDashboardController::class, 'storeProfile'])->name('profile.store');
     Route::get('/profile/edit', [DriverDashboardController::class, 'editProfile'])->name('profile.edit');

@@ -28,14 +28,6 @@ class DashboardController extends Controller
         $completedTrips = $driverProfile->trips()->where('status', 'completed')->count();
         $totalEarnings = $driverProfile->trips()->where('status', 'completed')->sum('amount');
 
-        // Get recent trips for quick actions
-        $recentTrips = $driverProfile->trips()
-            ->with('sacco')
-            ->whereIn('status', ['scheduled', 'in_progress'])
-            ->orderBy('departure_time', 'asc')
-            ->limit(3)
-            ->get();
-
         $stats = [
             'total_trips' => $totalTrips,
             'active_trips' => $activeTrips,
@@ -46,7 +38,7 @@ class DashboardController extends Controller
             'is_available' => $driverProfile->is_available,
         ];
 
-        return view('driver.dashboard', compact('driverProfile', 'stats', 'recentTrips'));
+        return view('driver.dashboard', compact('driverProfile', 'stats'));
     }
 
     public function createProfile()
@@ -111,5 +103,39 @@ class DashboardController extends Controller
         $driverProfile->update($request->all());
 
         return redirect()->route('driver.dashboard')->with('success', 'Driver profile updated successfully!');
+    }
+
+    public function getCompletedTrips()
+    {
+        $user = Auth::user();
+        $driverProfile = $user->driverProfile;
+        
+        if (!$driverProfile) {
+            return response()->json(['error' => 'Driver profile not found'], 404);
+        }
+
+        $completedTrips = $driverProfile->trips()
+            ->with('sacco')
+            ->where('status', 'completed')
+            ->orderBy('departure_time', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($trip) {
+                return [
+                    'id' => $trip->id,
+                    'from_location' => $trip->from_location,
+                    'to_location' => $trip->to_location,
+                    'departure_time' => $trip->departure_time->format('M d, Y - g:i A'),
+                    'amount' => $trip->formatted_amount,
+                    'booked_seats' => $trip->booked_seats,
+                    'available_seats' => $trip->available_seats,
+                    'sacco_name' => $trip->sacco->name,
+                    'status' => $trip->status,
+                    'can_delete' => true, // Completed trips can always be deleted
+                    'delete_url' => route('driver.trips.destroy', $trip)
+                ];
+            });
+
+        return response()->json($completedTrips);
     }
 }

@@ -652,11 +652,11 @@
                 </div>
             </div>
 
-            <!-- Recent/Upcoming Trips -->
+            <!-- Recent Trips -->
             @if($recentTrips->isNotEmpty())
             <div class="mt-12 fade-in stagger-3">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-bold text-primary">Upcoming Trips</h3>
+                    <h3 class="text-2xl font-bold text-primary">Recent Trips</h3>
                     <a href="{{ route('driver.trips.index') }}" class="text-secondary hover:text-secondary-dark font-medium">
                         View All Trips →
                     </a>
@@ -753,6 +753,20 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                                 Complete
+                                            </button>
+                                        </form>
+                                    @elseif(in_array($trip->status, ['completed', 'cancelled']))
+                                        <!-- Delete Button for completed/cancelled trips -->
+                                        <form method="POST" action="{{ route('driver.trips.destroy', $trip) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this {{ $trip->status }} trip? This action cannot be undone.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
+                                                    title="Delete {{ ucfirst($trip->status) }} Trip">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                                Delete
                                             </button>
                                         </form>
                                     @endif

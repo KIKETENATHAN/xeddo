@@ -166,13 +166,13 @@ class TripController extends Controller
             abort(403, 'Unauthorized access to this trip.');
         }
 
-        // Only allow deletion of scheduled trips with no bookings
-        if ($trip->status !== 'scheduled') {
-            return redirect()->route('driver.trips.index')->with('error', 'Only scheduled trips can be deleted.');
+        // Allow deletion of scheduled trips with no bookings, cancelled trips, and completed trips
+        if ($trip->status === 'scheduled' && $trip->booked_seats > 0) {
+            return redirect()->route('driver.trips.index')->with('error', 'Cannot delete scheduled trip with existing bookings.');
         }
 
-        if ($trip->booked_seats > 0) {
-            return redirect()->route('driver.trips.index')->with('error', 'Cannot delete trip with existing bookings.');
+        if ($trip->status === 'in_progress') {
+            return redirect()->route('driver.trips.index')->with('error', 'Cannot delete trip that is currently in progress.');
         }
 
         $trip->delete();
