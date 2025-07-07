@@ -60,6 +60,7 @@
             text-transform: uppercase;
         }
 
+        .status-pending_acceptance { background: #fef3c7; color: #d97706; }
         .status-scheduled { background: #dbeafe; color: #1e40af; }
         .status-in_progress { background: #fef3c7; color: #d97706; }
         .status-completed { background: #d1fae5; color: #065f46; }

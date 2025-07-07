@@ -54,7 +54,7 @@ class TripController extends Controller
             'departure_time' => $request->departure_time,
             'estimated_arrival_time' => $request->estimated_arrival_time,
             'amount' => $request->amount,
-            'status' => 'scheduled',
+            'status' => 'pending_acceptance', // Driver needs to accept first
             'available_seats' => $request->available_seats,
             'booked_seats' => 0,
             'notes' => $request->notes,
@@ -92,7 +92,7 @@ class TripController extends Controller
             'estimated_arrival_time' => 'required|date|after:departure_time',
             'amount' => 'required|numeric|min:0',
             'available_seats' => 'required|integer|min:1|max:50',
-            'status' => 'required|in:scheduled,in_progress,completed,cancelled',
+            'status' => 'required|in:pending_acceptance,scheduled,in_progress,completed,cancelled',
             'notes' => 'nullable|string|max:1000',
         ]);
 
@@ -118,7 +118,7 @@ class TripController extends Controller
     public function updateStatus(Request $request, Trip $trip)
     {
         $request->validate([
-            'status' => 'required|in:scheduled,in_progress,completed,cancelled'
+            'status' => 'required|in:pending_acceptance,scheduled,in_progress,completed,cancelled'
         ]);
 
         $trip->update(['status' => $request->status]);

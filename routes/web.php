@@ -89,6 +89,7 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->g
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
     Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show');
     Route::post('/trips/{trip}/accept', [TripController::class, 'acceptTrip'])->name('trips.accept');
+    Route::post('/trips/{trip}/reject', [TripController::class, 'rejectTrip'])->name('trips.reject');
     Route::post('/trips/{trip}/start', [TripController::class, 'startTrip'])->name('trips.start');
     Route::post('/trips/{trip}/complete', [TripController::class, 'completeTrip'])->name('trips.complete');
 });

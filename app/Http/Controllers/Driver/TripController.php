@@ -18,21 +18,32 @@ class TripController extends Controller
             return redirect()->route('driver.profile.create');
         }
 
-        // Get trips assigned to this driver
-        $assignedTrips = $driverProfile->trips()
-            ->with('sacco')
+        // Get trips assigned to this driver that are pending acceptance
+        $pendingTrips = Trip::with('sacco')
+            ->where('driver_id', $driverProfile->id)
+            ->where('status', 'pending_acceptance')
+            ->orderBy('departure_time', 'asc')
+            ->get();
+
+        // Get trips accepted by this driver
+        $acceptedTrips = Trip::with('sacco')
+            ->where('driver_id', $driverProfile->id)
             ->whereIn('status', ['scheduled', 'in_progress'])
             ->orderBy('departure_time', 'asc')
             ->get();
 
-        // Get available trips that need drivers (optional - if you want to show unassigned trips)
-        $availableTrips = Trip::with('sacco')
-            ->where('status', 'scheduled')
-            ->where('driver_id', null)
-            ->orderBy('departure_time', 'asc')
+        // Get completed trips for reference
+        $completedTrips = Trip::with('sacco')
+            ->where('driver_id', $driverProfile->id)
+            ->where('status', 'completed')
+            ->orderBy('departure_time', 'desc')
+            ->limit(5)
             ->get();
+
+        // Count of new notifications (pending trips)
+        $newNotificationsCount = $pendingTrips->count();
         
-        return view('driver.trips.index', compact('assignedTrips', 'availableTrips'));
+        return view('driver.trips.index', compact('pendingTrips', 'acceptedTrips', 'completedTrips', 'newNotificationsCount'));
     }
 
 
@@ -82,24 +93,55 @@ class TripController extends Controller
             return response()->json(['error' => 'Driver profile not found'], 400);
         }
 
-        // Check if trip is available for acceptance
-        if ($trip->driver_id !== null && $trip->driver_id !== $driverProfile->id) {
-            return response()->json(['error' => 'Trip already assigned to another driver'], 400);
+        // Check if trip is assigned to this driver and pending acceptance
+        if ($trip->driver_id !== $driverProfile->id) {
+            return response()->json(['error' => 'Trip not assigned to you'], 400);
         }
 
-        if ($trip->status !== 'scheduled') {
+        if ($trip->status !== 'pending_acceptance') {
             return response()->json(['error' => 'Trip is not available for acceptance'], 400);
         }
 
-        // Assign driver to trip
-        $trip->update([
-            'driver_id' => $driverProfile->id,
-            'status' => 'scheduled'
-        ]);
+        // Accept the trip
+        $trip->update(['status' => 'scheduled']);
+
+        // TODO: Send notification to admin about trip acceptance
 
         return response()->json([
             'success' => true,
             'message' => 'Trip accepted successfully! Admin will be notified.'
+        ]);
+    }
+
+    public function rejectTrip(Request $request, Trip $trip)
+    {
+        $user = Auth::user();
+        $driverProfile = $user->driverProfile;
+        
+        if (!$driverProfile) {
+            return response()->json(['error' => 'Driver profile not found'], 400);
+        }
+
+        // Check if trip is assigned to this driver and pending acceptance
+        if ($trip->driver_id !== $driverProfile->id) {
+            return response()->json(['error' => 'Trip not assigned to you'], 400);
+        }
+
+        if ($trip->status !== 'pending_acceptance') {
+            return response()->json(['error' => 'Trip is not available for rejection'], 400);
+        }
+
+        // Reject the trip - unassign driver and set back to available
+        $trip->update([
+            'driver_id' => null,
+            'status' => 'scheduled'
+        ]);
+
+        // TODO: Send notification to admin about trip rejection
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Trip rejected. Admin will be notified to reassign.'
         ]);
     }
 
