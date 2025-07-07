@@ -53,6 +53,7 @@ jobs:
           cp diagnostic.php deployment_temp/public_html/diagnostic.php
           cp test.php deployment_temp/public_html/test.php
           cp verify.php deployment_temp/public_html/verify.php
+          cp simple_test.php deployment_temp/public_html/simple_test.php
           
           # Create .env file for production (only if it doesn't exist)
           if [ ! -f "deployment_temp/xeddo/.env" ]; then
