@@ -87,9 +87,10 @@ Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->g
     
     // Trip viewing and status management for drivers
     Route::get('/trips', [TripController::class, 'index'])->name('trips.index');
-    Route::patch('/trips/{trip}/accept', [TripController::class, 'acceptTrip'])->name('trips.accept');
-    Route::patch('/trips/{trip}/start', [TripController::class, 'startTrip'])->name('trips.start');
-    Route::patch('/trips/{trip}/complete', [TripController::class, 'completeTrip'])->name('trips.complete');
+    Route::get('/trips/{trip}', [TripController::class, 'show'])->name('trips.show');
+    Route::post('/trips/{trip}/accept', [TripController::class, 'acceptTrip'])->name('trips.accept');
+    Route::post('/trips/{trip}/start', [TripController::class, 'startTrip'])->name('trips.start');
+    Route::post('/trips/{trip}/complete', [TripController::class, 'completeTrip'])->name('trips.complete');
 });
 
 // Passenger routes
