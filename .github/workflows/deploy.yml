@@ -27,58 +27,60 @@ jobs:
 
       - name: Create deployment structure
         run: |
-          mkdir -p deployment_temp/laravel_app
-          mkdir -p deployment_temp/www
+          mkdir -p deployment_temp/xeddo
+          mkdir -p deployment_temp/public_html
           
           # Copy all Laravel files except public folder (INCLUDE vendor!)
-          rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' ./ deployment_temp/laravel_app/
+          rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' ./ deployment_temp/xeddo/
           
           # Verify vendor folder exists after copy
-          if [ -d "deployment_temp/laravel_app/vendor" ]; then
+          if [ -d "deployment_temp/xeddo/vendor" ]; then
             echo "✅ Vendor folder successfully copied"
-            ls -la deployment_temp/laravel_app/vendor/ | head -10
+            ls -la deployment_temp/xeddo/vendor/ | head -10
           else
             echo "❌ Vendor folder missing after copy!"
-            echo "Available directories in laravel_app:"
-            ls -la deployment_temp/laravel_app/
+            echo "Available directories in xeddo:"
+            ls -la deployment_temp/xeddo/
           fi
           
-          # Copy public folder contents to www (confirmed correct location)
-          cp -r public/* deployment_temp/www/
+          # Copy public folder contents to public_html (your domain root)
+          cp -r public/* deployment_temp/public_html/
           
           # Copy the special index.php for shared hosting
-          cp index_for_public_html.php deployment_temp/www/index.php
+          cp index_for_public_html.php deployment_temp/public_html/index.php
           
           # Copy diagnostic and test files
-          cp diagnostic.php deployment_temp/www/diagnostic.php
-          cp test.php deployment_temp/www/test.php
-          cp verify.php deployment_temp/www/verify.php
+          cp diagnostic.php deployment_temp/public_html/diagnostic.php
+          cp test.php deployment_temp/public_html/test.php
+          cp verify.php deployment_temp/public_html/verify.php
           
-          # Create .env file for production
-          cat > deployment_temp/laravel_app/.env << 'EOF'
+          # Create .env file for production (only if it doesn't exist)
+          if [ ! -f "deployment_temp/xeddo/.env" ]; then
+          cat > deployment_temp/xeddo/.env << 'EOF'
           APP_NAME=Xeddolink
           APP_ENV=production
           APP_KEY=base64:your_app_key_here
           APP_DEBUG=false
           APP_URL=https://xeddotravelink.com
-
+          
           DB_CONNECTION=mysql
           DB_HOST=localhost
           DB_PORT=3306
           DB_DATABASE=your_database_name
           DB_USERNAME=your_database_user
           DB_PASSWORD=your_database_password
-
+          
           LOG_CHANNEL=stack
           LOG_DEPRECATIONS_CHANNEL=null
           LOG_LEVEL=debug
           EOF
+          fi
           
           # Ensure storage directories exist
-          mkdir -p deployment_temp/laravel_app/storage/logs
-          mkdir -p deployment_temp/laravel_app/storage/framework/cache
-          mkdir -p deployment_temp/laravel_app/storage/framework/sessions
-          mkdir -p deployment_temp/laravel_app/storage/framework/views
+          mkdir -p deployment_temp/xeddo/storage/logs
+          mkdir -p deployment_temp/xeddo/storage/framework/cache
+          mkdir -p deployment_temp/xeddo/storage/framework/sessions
+          mkdir -p deployment_temp/xeddo/storage/framework/views
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
