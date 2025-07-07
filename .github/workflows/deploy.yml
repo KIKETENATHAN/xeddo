@@ -95,6 +95,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deployment_temp/
-          server-dir: /home/xeddotra/
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }}
           exclude: |
             **/storage/logs/**
