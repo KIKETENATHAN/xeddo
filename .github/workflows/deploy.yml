@@ -28,20 +28,30 @@ jobs:
       - name: Create deployment structure
         run: |
           mkdir -p deployment_temp/laravel_app
+          mkdir -p deployment_temp/public_html
           mkdir -p deployment_temp/www
           
           # Copy all Laravel files except public folder (INCLUDE vendor!)
           rsync -av --exclude='public' --exclude='.git' --exclude='node_modules' --exclude='tests' ./ deployment_temp/laravel_app/
           
-          # Copy public folder contents to www (your correct web root)
+          # Copy public folder contents to both possible web roots
+          cp -r public/* deployment_temp/public_html/
           cp -r public/* deployment_temp/www/
           
-          # Copy the special index.php for shared hosting
+          # Copy the special index.php for shared hosting to both locations
+          cp index_for_public_html.php deployment_temp/public_html/index.php
           cp index_for_public_html.php deployment_temp/www/index.php
           
-          # Copy diagnostic and test files
+          # Copy diagnostic and test files to both locations
+          cp diagnostic.php deployment_temp/public_html/diagnostic.php
           cp diagnostic.php deployment_temp/www/diagnostic.php
+          cp test.php deployment_temp/public_html/test.php
           cp test.php deployment_temp/www/test.php
+          cp verify.php deployment_temp/public_html/verify.php
+          cp verify.php deployment_temp/www/verify.php
+          
+          # Create a simple test file in root to verify deployment
+          echo "<?php echo 'Deployment successful! Current time: ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/deployment_test.php
           
           # Create .env file for production
           cat > deployment_temp/laravel_app/.env << 'EOF'
@@ -49,7 +59,7 @@ jobs:
           APP_ENV=production
           APP_KEY=base64:your_app_key_here
           APP_DEBUG=false
-          APP_URL=https://yourdomain.com
+          APP_URL=https://xeddotravelink.com
 
           DB_CONNECTION=mysql
           DB_HOST=localhost
