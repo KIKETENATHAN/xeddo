@@ -1,4 +1,4 @@
-name: Deploy to Shared Hosting via FTP
+name: 🚀 Deploy Laravel App via FTP
 
 on:
   push:
@@ -6,142 +6,28 @@ on:
       - main
 
 jobs:
-  ftp-deploy:
-    name: Upload via FTP
+  deploy:
+    name: Upload to cPanel Hosting
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug Secrets
-        run: |
-          echo "FTP Server: ${{ secrets.FTP_SERVER }}"
-          echo "FTP Username: ${{ secrets.FTP_USERNAME }}"
-          if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
-            echo "ERROR: FTP_USERNAME secret is empty or not set!"
-            exit 1
-          else
-            echo "FTP_USERNAME secret is set"
-          fi
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Upload xeddo (Laravel core) to /xeddo/
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: xeddo/
+        local-dir: ./xeddo
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.2
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
-
-      - name: Install Dependencies
-        run: composer install --optimize-autoloader --no-dev
-
-      - name: Create deployment structure
-        run: |
-          echo "🔍 Creating optimized deployment structure for public_html..."
-          
-          # Create the correct paths - FTP_REMOTE_DIR is public_html/
-          mkdir -p deployment_temp
-          mkdir -p deployment_temp/xeddo
-          
-          # Verify vendor exists before copying
-          if [ -d "vendor" ]; then
-            echo "✅ Vendor directory found locally"
-            ls -la vendor/ | head -5
-            echo "Checking for autoload.php:"
-            ls -la vendor/autoload.php
-          else
-            echo "❌ Vendor directory not found locally!"
-            exit 1
-          fi
-          
-          # Copy all Laravel files to xeddo directory (explicitly include vendor)
-          cp -r app deployment_temp/xeddo/
-          cp -r bootstrap deployment_temp/xeddo/
-          cp -r config deployment_temp/xeddo/
-          cp -r database deployment_temp/xeddo/
-          cp -r resources deployment_temp/xeddo/
-          cp -r routes deployment_temp/xeddo/
-          cp -r storage deployment_temp/xeddo/
-          cp -r vendor deployment_temp/xeddo/
-          cp artisan deployment_temp/xeddo/
-          cp composer.json deployment_temp/xeddo/
-          cp composer.lock deployment_temp/xeddo/
-          
-          # Verify vendor was copied successfully
-          if [ -f "deployment_temp/xeddo/vendor/autoload.php" ]; then
-            echo "✅ Vendor/autoload.php successfully copied to deployment"
-            ls -la deployment_temp/xeddo/vendor/ | head -5
-          else
-            echo "❌ Vendor/autoload.php missing in deployment!"
-            ls -la deployment_temp/xeddo/
-            exit 1
-          fi
-          
-          # Copy public files directly to deployment_temp root (goes to public_html/ via FTP)
-          cp -r public/* deployment_temp/
-          
-          # Copy the correct index.php to deployment_temp root
-          cp index_for_public_html.php deployment_temp/index.php
-          
-          # Copy diagnostic files to deployment_temp root
-          cp diagnostic.php deployment_temp/diagnostic.php
-          cp verify.php deployment_temp/verify.php
-          
-          # Create .env file for production
-          cat > deployment_temp/xeddo/.env << 'EOF'
-          APP_NAME=Xeddolink
-          APP_ENV=production
-          APP_KEY=base64:your_app_key_here
-          APP_DEBUG=false
-          APP_URL=https://xeddotravelink.com
-          
-          DB_CONNECTION=mysql
-          DB_HOST=localhost
-          DB_PORT=3306
-          DB_DATABASE=your_database_name
-          DB_USERNAME=your_database_user
-          DB_PASSWORD=your_database_password
-          
-          LOG_CHANNEL=stack
-          LOG_DEPRECATIONS_CHANNEL=null
-          LOG_LEVEL=debug
-          EOF
-          
-          # Ensure storage directories exist
-          mkdir -p deployment_temp/xeddo/storage/logs
-          mkdir -p deployment_temp/xeddo/storage/framework/cache
-          mkdir -p deployment_temp/xeddo/storage/framework/sessions
-          mkdir -p deployment_temp/xeddo/storage/framework/views
-          
-          # Verify vendor folder
-          if [ -d "deployment_temp/xeddo/vendor" ]; then
-            echo "✅ Vendor folder successfully copied"
-            ls -la deployment_temp/xeddo/vendor/ | head -5
-          else
-            echo "❌ Vendor folder missing!"
-          fi
-          
-          # Show final structure
-          echo "📁 Final deployment structure:"
-          find deployment_temp -maxdepth 2 -name "*.php" | head -10
-          
-          # Create timestamp test files to verify deployment is working
-          echo "<?php echo 'DEPLOYMENT TEST: ' . date('Y-m-d H:i:s') . ' - Files deployed successfully!' . '<br>Directory: ' . __DIR__ . '<br>Document Root: ' . \$_SERVER['DOCUMENT_ROOT']; ?>" > deployment_temp/deployment_check.php
-          echo "<?php echo 'XEDDO FOLDER TEST: ' . __DIR__ . ' - ' . date('Y-m-d H:i:s'); ?>" > deployment_temp/xeddo/xeddo_test.php
-          
-          # Show what we're about to deploy
-          echo "📋 Files being deployed:"
-          ls -la deployment_temp/ | head -10
-          echo "📋 Laravel app files:"
-          ls -la deployment_temp/xeddo/ | head -10
-
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./deployment_temp/
-          server-dir: /
-          dry-run: false
-          exclude: |
-            **/storage/logs/**
+    - name: Upload public (Laravel public) to /public_html/
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: public_html/
+        local-dir: ./public
