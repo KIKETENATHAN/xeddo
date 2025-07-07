@@ -11,27 +11,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
 
-    - name: Upload xeddo (Laravel core) to /xeddo/
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: xeddo/
-        local-dir: ./xeddo/
-        dangerous-clean-slate: false
-        log-level: verbose
+      # ✅ Upload Laravel core to /home/xeddotra/xeddo/
+      - name: 📂 Upload xeddo (Laravel core) to /xeddo/
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ../xeddo/
+          local-dir: ./xeddo/
+          dangerous-clean-slate: false
+          log-level: verbose
 
-    - name: Upload public (Laravel public) to /public_html/
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: ./
-        local-dir: ./public/
-        dangerous-clean-slate: false
-        log-level: verbose
+      # ✅ Upload Laravel public to /home/xeddotra/public_html/
+      - name: 🌐 Upload public (Laravel public) to /public_html/
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./           # Already inside public_html
+          local-dir: ./public/
+          dangerous-clean-slate: false
+          log-level: verbose
