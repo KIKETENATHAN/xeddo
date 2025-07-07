@@ -652,133 +652,79 @@
                 </div>
             </div>
 
-            <!-- Recent Trips -->
-            @if($recentTrips->isNotEmpty())
-            <div class="mt-12 fade-in stagger-3">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-bold text-primary">Recent Trips</h3>
-                    <a href="{{ route('driver.trips.index') }}" class="text-secondary hover:text-secondary-dark font-medium">
-                        View All Trips →
-                    </a>
+            <!-- Quick Actions -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6 fade-in stagger-4">
+                <div class="dashboard-card text-center p-6 group cursor-pointer">
+                    <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Earnings Report</h4>
+                    <p class="text-gray-600 text-sm">View your daily and weekly earnings</p>
                 </div>
-                
-                <div class="space-y-4">
-                    @foreach($recentTrips as $trip)
-                        <div class="dashboard-card p-6">
-                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                                <div class="flex-1">
-                                    <div class="flex items-center space-x-3 mb-3">
-                                        <span class="px-3 py-1 text-xs font-semibold rounded-full
-                                            @if($trip->status === 'scheduled') bg-blue-100 text-blue-800
-                                            @elseif($trip->status === 'in_progress') bg-yellow-100 text-yellow-800
-                                            @endif">
-                                            {{ ucfirst(str_replace('_', ' ', $trip->status)) }}
-                                        </span>
-                                        <span class="text-lg font-bold text-secondary">{{ $trip->formatted_amount }}</span>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <p class="text-sm text-gray-600 mb-1">Route:</p>
-                                            <p class="font-medium text-primary">{{ $trip->from_location }} → {{ $trip->to_location }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-sm text-gray-600 mb-1">Departure:</p>
-                                            <p class="font-medium text-primary">{{ $trip->departure_time->format('M d, Y - g:i A') }}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex items-center gap-4 mt-3 text-sm text-gray-600">
-                                        <div class="flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                            </svg>
-                                            {{ $trip->booked_seats }}/{{ $trip->available_seats }} seats
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="flex flex-wrap gap-2 mt-4 lg:mt-0">
-                                    @if($trip->status === 'scheduled')
-                                        <!-- Edit Button -->
-                                        <a href="{{ route('driver.trips.edit', $trip) }}" 
-                                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
-                                           title="Edit Trip">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                            </svg>
-                                            Edit
-                                        </a>
+                <button id="completedTripsBtn" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline border-none bg-white">
+                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Completed Trips</h4>
+                    <p class="text-gray-600 text-sm">View and manage completed trips</p>
+                </button>
 
-                                        @if($trip->booked_seats == 0)
-                                            <!-- Delete Button -->
-                                            <form method="POST" action="{{ route('driver.trips.destroy', $trip) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this trip? This action cannot be undone.')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" 
-                                                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
-                                                        title="Delete Trip">
-                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                    </svg>
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        @endif
+                <a href="{{ route('driver.trips.create') }}" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline">
+                    <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Start Trip</h4>
+                    <p class="text-gray-600 text-sm">Create a new trip for passengers</p>
+                </a>
 
-                                        <!-- Start Trip Button -->
-                                        <form method="POST" action="{{ route('driver.trips.update-status', $trip) }}" class="inline">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="in_progress">
-                                            <button type="submit" 
-                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
-                                                    title="Start Trip">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h2m3 0h2M12 3v18"></path>
-                                                </svg>
-                                                Start
-                                            </button>
-                                        </form>
-                                    @elseif($trip->status === 'in_progress')
-                                        <!-- Complete Trip Button -->
-                                        <form method="POST" action="{{ route('driver.trips.update-status', $trip) }}" class="inline">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="hidden" name="status" value="completed">
-                                            <button type="submit" 
-                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-green-600 rounded-lg hover:from-green-600 hover:to-green-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
-                                                    title="Complete Trip">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                                Complete
-                                            </button>
-                                        </form>
-                                    @elseif(in_array($trip->status, ['completed', 'cancelled']))
-                                        <!-- Delete Button for completed/cancelled trips -->
-                                        <form method="POST" action="{{ route('driver.trips.destroy', $trip) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this {{ $trip->status }} trip? This action cannot be undone.')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl" 
-                                                    title="Delete {{ ucfirst($trip->status) }} Trip">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                                Delete
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
+                <a href="{{ route('driver.trips.index') }}" class="dashboard-card text-center p-6 group cursor-pointer hover:no-underline">
+                    <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-primary mb-2">All Trips</h4>
+                    <p class="text-gray-600 text-sm">View and manage all your trips</p>
+                </a>
+            </div>
+
+            <!-- Completed Trips Modal -->
+            <div id="completedTripsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                    <!-- Modal Header -->
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h3 class="text-xl font-bold text-white">Completed Trips</h3>
+                        </div>
+                        <button id="closeModal" class="text-white hover:text-gray-200 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Content -->
+                    <div class="p-6 overflow-y-auto max-h-[70vh]">
+                        <div id="completedTripsContent">
+                            <!-- Loading state -->
+                            <div id="loadingSpinner" class="flex items-center justify-center py-12">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                                <span class="ml-3 text-gray-600">Loading completed trips...</span>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
-            @endif
-
-            <!-- Quick Actions -->
             <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 fade-in stagger-4">
                 <div class="dashboard-card text-center p-6 group cursor-pointer">
                     <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
@@ -844,6 +790,132 @@
                     button.style.transform = 'scale(1)';
                 }, 150);
             });
+        }
+
+        // Modal functionality for completed trips
+        const completedTripsBtn = document.getElementById('completedTripsBtn');
+        const completedTripsModal = document.getElementById('completedTripsModal');
+        const closeModal = document.getElementById('closeModal');
+        const completedTripsContent = document.getElementById('completedTripsContent');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        // Open modal and fetch completed trips
+        completedTripsBtn.addEventListener('click', function() {
+            completedTripsModal.classList.remove('hidden');
+            fetchCompletedTrips();
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            completedTripsModal.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside
+        completedTripsModal.addEventListener('click', function(e) {
+            if (e.target === completedTripsModal) {
+                completedTripsModal.classList.add('hidden');
+            }
+        });
+
+        // Fetch completed trips via AJAX
+        function fetchCompletedTrips() {
+            loadingSpinner.style.display = 'flex';
+            
+            fetch('{{ route("driver.completed.trips") }}')
+                .then(response => response.json())
+                .then(data => {
+                    loadingSpinner.style.display = 'none';
+                    displayCompletedTrips(data);
+                })
+                .catch(error => {
+                    loadingSpinner.style.display = 'none';
+                    completedTripsContent.innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="text-red-500 text-lg font-semibold mb-2">Error loading trips</div>
+                            <p class="text-gray-600">Please try again later.</p>
+                        </div>
+                    `;
+                    console.error('Error:', error);
+                });
+        }
+
+        // Display completed trips
+        function displayCompletedTrips(trips) {
+            if (trips.length === 0) {
+                completedTripsContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Completed Trips</h3>
+                        <p class="text-gray-500">You haven't completed any trips yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="space-y-4">';
+            
+            trips.forEach(trip => {
+                html += `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        Completed
+                                    </span>
+                                    <span class="text-lg font-bold text-green-600">${trip.amount}</span>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Route:</p>
+                                        <p class="font-medium text-gray-800">${trip.from_location} → ${trip.to_location}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Departure:</p>
+                                        <p class="font-medium text-gray-800">${trip.departure_time}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 text-sm text-gray-600">
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                        ${trip.booked_seats}/${trip.available_seats} seats
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                        ${trip.sacco_name}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 md:mt-0">
+                                <form method="POST" action="${trip.delete_url}" class="inline" onsubmit="return confirm('Are you sure you want to delete this completed trip? This action cannot be undone.')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:from-red-600 hover:to-red-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            completedTripsContent.innerHTML = html;
         }
         
         // Add some test content to ensure scrolling works
