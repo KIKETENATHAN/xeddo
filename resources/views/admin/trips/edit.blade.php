@@ -134,39 +134,52 @@
                         @enderror
                     </div>
 
-                    <!-- SACCO Selection -->
+                    <!-- Route Selection -->
                     <div>
-                        <label for="sacco_id" class="form-label">SACCO</label>
-                        <select name="sacco_id" id="sacco_id" class="form-input" required>
-                            <option value="">Select a SACCO</option>
-                            @foreach($saccos as $sacco)
-                                <option value="{{ $sacco->id }}" {{ old('sacco_id', $trip->sacco_id) == $sacco->id ? 'selected' : '' }}>
-                                    {{ $sacco->name }}
+                        <label for="route_id" class="form-label">Select Route</label>
+                        <select name="route_id" id="route_id" class="form-input" required>
+                            <option value="">Select a route</option>
+                            @foreach($routes as $route)
+                                <option value="{{ $route->id }}" 
+                                        data-from="{{ $route->from_location }}" 
+                                        data-to="{{ $route->to_location }}" 
+                                        data-fare="{{ $route->estimated_fare }}"
+                                        {{ old('route_id', $trip->route_id) == $route->id ? 'selected' : '' }}>
+                                    {{ $route->from_location }} → {{ $route->to_location }}
+                                    @if($route->estimated_fare)
+                                        (Estimated: KSh {{ number_format($route->estimated_fare, 2) }})
+                                    @endif
                                 </option>
                             @endforeach
                         </select>
-                        @error('sacco_id')
+                        @error('route_id')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- From Location -->
+                    <!-- From Location (Auto-populated from route) -->
                     <div>
                         <label for="from_location" class="form-label">From Location</label>
                         <input type="text" name="from_location" id="from_location" value="{{ old('from_location', $trip->from_location) }}" 
-                               class="form-input" placeholder="e.g., Nairobi CBD" required>
+                               class="form-input @if($trip->route_id) bg-gray-100 @endif" 
+                               placeholder="Select a route first..." 
+                               @if($trip->route_id) readonly @endif>
+                        <small class="text-gray-500">This will be auto-filled when you select a route</small>
                         @error('from_location')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- To Location -->
+                    <!-- To Location (Auto-populated from route) -->
                     <div>
                         <label for="to_location" class="form-label">To Location</label>
                         <input type="text" name="to_location" id="to_location" value="{{ old('to_location', $trip->to_location) }}" 
-                               class="form-input" placeholder="e.g., Mombasa" required>
+                               class="form-input @if($trip->route_id) bg-gray-100 @endif" 
+                               placeholder="Select a route first..." 
+                               @if($trip->route_id) readonly @endif>
+                        <small class="text-gray-500">This will be auto-filled when you select a route</small>
                         @error('to_location')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
@@ -258,6 +271,49 @@
     </main>
 
     <script>
+        // Auto-populate locations and suggested fare when route is selected
+        document.getElementById('route_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const fromLocation = document.getElementById('from_location');
+            const toLocation = document.getElementById('to_location');
+            const amountField = document.getElementById('amount');
+            
+            if (selectedOption.value) {
+                // Auto-populate from and to locations
+                fromLocation.value = selectedOption.dataset.from || '';
+                toLocation.value = selectedOption.dataset.to || '';
+                fromLocation.readOnly = true;
+                toLocation.readOnly = true;
+                
+                // Suggest fare if available
+                if (selectedOption.dataset.fare && selectedOption.dataset.fare !== 'null') {
+                    if (!amountField.value) { // Only suggest if no value already set
+                        amountField.value = selectedOption.dataset.fare;
+                    }
+                    amountField.placeholder = `Suggested: KSh ${selectedOption.dataset.fare}`;
+                } else {
+                    amountField.placeholder = 'Enter trip fare';
+                }
+                
+                // Remove readonly styling since locations are now populated
+                fromLocation.classList.remove('bg-gray-100');
+                toLocation.classList.remove('bg-gray-100');
+                fromLocation.classList.add('bg-gray-100');
+                toLocation.classList.add('bg-gray-100');
+            } else {
+                // Clear fields if no route selected
+                fromLocation.value = '';
+                toLocation.value = '';
+                fromLocation.readOnly = false;
+                toLocation.readOnly = false;
+                amountField.placeholder = 'Enter trip fare';
+                
+                // Remove readonly styling
+                fromLocation.classList.remove('bg-gray-100');
+                toLocation.classList.remove('bg-gray-100');
+            }
+        });
+
         // Update arrival time minimum when departure time changes
         document.getElementById('departure_time').addEventListener('change', function() {
             document.getElementById('estimated_arrival_time').min = this.value;

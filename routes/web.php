@@ -79,6 +79,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Trip management routes
     Route::resource('trips', \App\Http\Controllers\Admin\TripController::class);
     Route::patch('/trips/{trip}/status', [\App\Http\Controllers\Admin\TripController::class, 'updateStatus'])->name('trips.update-status');
+    Route::get('/routes/{route}/details', [\App\Http\Controllers\Admin\TripController::class, 'getRouteDetails'])->name('routes.details');
     
     // Booking management routes
     Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->only(['index', 'show']);
@@ -86,6 +87,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/bookings/{booking}/cancel', [\App\Http\Controllers\Admin\BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/analytics', [\App\Http\Controllers\Admin\BookingController::class, 'analytics'])->name('bookings.analytics');
     Route::get('/bookings/export', [\App\Http\Controllers\Admin\BookingController::class, 'export'])->name('bookings.export');
+    
+    // Route management
+    Route::resource('routes', \App\Http\Controllers\Admin\RouteController::class);
+    Route::patch('/routes/{route}/toggle-status', [\App\Http\Controllers\Admin\RouteController::class, 'toggleStatus'])->name('routes.toggle-status');
     
     // Payment management routes
     Route::get('/payments/analytics', [AdminPaymentController::class, 'analytics'])->name('payments.analytics');

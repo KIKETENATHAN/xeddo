@@ -8,6 +8,7 @@ use App\Models\DriverProfile;
 use App\Models\PassengerProfile;
 use App\Models\Sacco;
 use App\Models\Trip;
+use App\Models\Route;
 use App\Models\AdminNotification;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,8 @@ class DashboardController extends Controller
         $pendingDrivers = DriverProfile::where('status', 'pending')->count();
         $activeDrivers = DriverProfile::where('status', 'approved')->where('is_available', true)->count();
         $totalSaccos = Sacco::count();
+        $totalRoutes = Route::count();
+        $activeRoutes = Route::where('is_active', true)->count();
         $totalTrips = Trip::count();
         $activeTrips = Trip::whereIn('status', ['scheduled', 'in_progress'])->count();
 
@@ -39,6 +42,8 @@ class DashboardController extends Controller
             'pendingDrivers',
             'activeDrivers',
             'totalSaccos',
+            'totalRoutes',
+            'activeRoutes',
             'totalTrips',
             'activeTrips',
             'notifications',

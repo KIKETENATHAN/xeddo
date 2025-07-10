@@ -139,39 +139,48 @@
                         @enderror
                     </div>
 
-                    <!-- SACCO Selection -->
+                    <!-- Route Selection -->
                     <div>
-                        <label for="sacco_id" class="form-label">SACCO</label>
-                        <select name="sacco_id" id="sacco_id" class="form-input" required>
-                            <option value="">Select a SACCO</option>
-                            @foreach($saccos as $sacco)
-                                <option value="{{ $sacco->id }}" {{ old('sacco_id') == $sacco->id ? 'selected' : '' }}>
-                                    {{ $sacco->name }}
+                        <label for="route_id" class="form-label">Select Route</label>
+                        <select name="route_id" id="route_id" class="form-input" required>
+                            <option value="">Select a route</option>
+                            @foreach($routes as $route)
+                                <option value="{{ $route->id }}" 
+                                        data-from="{{ $route->from_location }}" 
+                                        data-to="{{ $route->to_location }}" 
+                                        data-fare="{{ $route->estimated_fare }}"
+                                        {{ old('route_id') == $route->id ? 'selected' : '' }}>
+                                    {{ $route->from_location }} → {{ $route->to_location }}
+                                    @if($route->estimated_fare)
+                                        (Estimated: KSh {{ number_format($route->estimated_fare, 2) }})
+                                    @endif
                                 </option>
                             @endforeach
                         </select>
-                        @error('sacco_id')
+                        @error('route_id')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- From Location -->
+                    <!-- From Location (Auto-populated from route) -->
                     <div>
                         <label for="from_location" class="form-label">From Location</label>
                         <input type="text" name="from_location" id="from_location" value="{{ old('from_location') }}" 
-                               class="form-input" placeholder="e.g., Nairobi CBD" required>
+                               class="form-input bg-gray-100" placeholder="Select a route first..." readonly>
+                        <small class="text-gray-500">This will be auto-filled when you select a route</small>
                         @error('from_location')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- To Location -->
+                    <!-- To Location (Auto-populated from route) -->
                     <div>
                         <label for="to_location" class="form-label">To Location</label>
                         <input type="text" name="to_location" id="to_location" value="{{ old('to_location') }}" 
-                               class="form-input" placeholder="e.g., Mombasa" required>
+                               class="form-input bg-gray-100" placeholder="Select a route first..." readonly>
+                        <small class="text-gray-500">This will be auto-filled when you select a route</small>
                         @error('to_location')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
@@ -249,21 +258,39 @@
     </main>
 
     <script>
-        // Auto-update SACCO when driver is selected
-        document.getElementById('driver_id').addEventListener('change', function() {
+        // Auto-populate locations and suggested fare when route is selected
+        document.getElementById('route_id').addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
+            const fromLocation = document.getElementById('from_location');
+            const toLocation = document.getElementById('to_location');
+            const amountField = document.getElementById('amount');
+            
             if (selectedOption.value) {
-                // Extract SACCO from the option text
-                const driverText = selectedOption.text;
-                const saccoSelect = document.getElementById('sacco_id');
+                // Auto-populate from and to locations
+                fromLocation.value = selectedOption.dataset.from || '';
+                toLocation.value = selectedOption.dataset.to || '';
                 
-                // Try to match SACCO name from driver text
-                for (let i = 0; i < saccoSelect.options.length; i++) {
-                    if (driverText.includes(saccoSelect.options[i].text)) {
-                        saccoSelect.selectedIndex = i;
-                        break;
-                    }
+                // Suggest fare if available
+                if (selectedOption.dataset.fare && selectedOption.dataset.fare !== 'null') {
+                    amountField.value = selectedOption.dataset.fare;
+                    amountField.placeholder = `Suggested: KSh ${selectedOption.dataset.fare}`;
+                } else {
+                    amountField.placeholder = 'Enter trip fare';
                 }
+                
+                // Remove readonly styling since locations are now populated
+                fromLocation.classList.remove('bg-gray-100');
+                toLocation.classList.remove('bg-gray-100');
+            } else {
+                // Clear fields if no route selected
+                fromLocation.value = '';
+                toLocation.value = '';
+                amountField.value = '';
+                amountField.placeholder = 'Enter trip fare';
+                
+                // Add readonly styling back
+                fromLocation.classList.add('bg-gray-100');
+                toLocation.classList.add('bg-gray-100');
             }
         });
 

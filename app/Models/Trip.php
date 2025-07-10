@@ -12,6 +12,7 @@ class Trip extends Model
     protected $fillable = [
         'driver_id',
         'sacco_id',
+        'route_id',
         'from_location',
         'to_location',
         'departure_time',
@@ -42,6 +43,11 @@ class Trip extends Model
     public function sacco()
     {
         return $this->belongsTo(Sacco::class);
+    }
+
+    public function route()
+    {
+        return $this->belongsTo(Route::class);
     }
 
     public function bookings()

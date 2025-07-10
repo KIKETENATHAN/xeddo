@@ -66,11 +66,12 @@
 
         .stat-card {
             background: var(--gradient-navy);
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
             transition: all 0.3s ease;
             overflow: hidden;
             position: relative;
+            min-height: 80px;
         }
 
         .stat-card::before {
@@ -78,16 +79,16 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 100px;
-            height: 100px;
+            width: 40px;
+            height: 40px;
             background: rgba(245, 158, 11, 0.1);
             border-radius: 50%;
-            transform: translate(30px, -30px);
+            transform: translate(15px, -15px);
         }
 
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 25px 50px rgba(30, 58, 138, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
         }
 
         .stat-card.users {
@@ -110,10 +111,44 @@
             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
         }
 
+        .stat-card.routes {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        }
+
+        .combined-stats-card {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .combined-stats-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+        }
+
+        .combined-transport-card {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .combined-transport-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+
         .btn-primary {
             background: var(--gradient-navy);
             color: white;
-            padding: 0.75rem 2rem;
+            padding: 0.5rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: 600;
             text-decoration: none;
@@ -121,19 +156,20 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+            box-shadow: 0 2px 8px rgba(30, 58, 138, 0.2);
             text-align: center;
+            font-size: 0.875rem;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
         }
 
         .btn-secondary {
             background: var(--gradient-gold);
             color: white;
-            padding: 0.75rem 2rem;
+            padding: 0.5rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: 600;
             text-decoration: none;
@@ -141,19 +177,20 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
             text-align: center;
+            font-size: 0.875rem;
         }
 
         .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
         }
 
         .btn-success {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 0.75rem 2rem;
+            padding: 0.5rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: 600;
             text-decoration: none;
@@ -161,19 +198,20 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
             text-align: center;
+            font-size: 0.875rem;
         }
 
         .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .btn-neutral {
             background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
             color: white;
-            padding: 0.75rem 2rem;
+            padding: 0.5rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: 600;
             text-decoration: none;
@@ -181,24 +219,46 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.2);
             text-align: center;
+            font-size: 0.875rem;
         }
 
         .btn-neutral:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
         }
 
         .icon-container {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(245, 158, 11, 0.2);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .hero-section {
@@ -257,12 +317,13 @@
 
         .action-card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
             border: 1px solid rgba(30, 58, 138, 0.1);
             overflow: hidden;
             position: relative;
+            min-height: 200px;
         }
 
         .action-card::before {
@@ -271,13 +332,13 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: var(--gradient-gold);
         }
 
         .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
         .admin-header {
@@ -532,82 +593,99 @@
             </div>
 
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 fade-in stagger-1">
-                <div class="stat-card users floating-animation">
-                    <div class="p-6 relative z-10">
-                        <div class="flex items-center">
-                            <div class="icon-container">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                </svg>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 fade-in stagger-1">
+                <!-- Combined Users Stats Card -->
+                <div class="combined-stats-card floating-animation">
+                    <div class="p-4 relative z-10">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="icon-container mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-blue-200">Platform Users</h3>
+                                    <p class="text-2xl font-bold text-white">{{ $totalUsers }}</p>
+                                    <p class="text-xs text-blue-200">Total Registered</p>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-blue-200">Total Users</h3>
-                                <p class="text-3xl font-bold text-white">{{ $totalUsers }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card passengers floating-animation" style="animation-delay: 0.2s;">
-                    <div class="p-6 relative z-10">
-                        <div class="flex items-center">
-                            <div class="icon-container">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-green-200">Total Passengers</h3>
-                                <p class="text-3xl font-bold text-white">{{ $totalPassengers }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card drivers floating-animation" style="animation-delay: 0.4s;">
-                    <div class="p-6 relative z-10">
-                        <div class="flex items-center">
-                            <div class="icon-container">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-yellow-200">Total Drivers</h3>
-                                <p class="text-3xl font-bold text-white">{{ $totalDrivers }}</p>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                    <div class="flex items-center justify-center mb-1">
+                                        <svg class="w-4 h-4 text-green-300 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-lg font-bold text-white">{{ $totalPassengers }}</p>
+                                    <p class="text-xs text-green-200">Passengers</p>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-center mb-1">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-lg font-bold text-white">{{ $totalDrivers }}</p>
+                                    <p class="text-xs text-yellow-200">Drivers</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="stat-card pending floating-animation" style="animation-delay: 0.6s;">
-                    <div class="p-6 relative z-10">
+                <!-- Combined Transport Management Card -->
+                <div class="combined-transport-card floating-animation" style="animation-delay: 0.2s;">
+                    <div class="p-4 relative z-10">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="icon-container mr-3">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-purple-200">Transport Network</h3>
+                                    <p class="text-2xl font-bold text-white">{{ $totalSaccos + ($totalRoutes ?? 0) }}</p>
+                                    <p class="text-xs text-purple-200">Total Resources</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                    <div class="flex items-center justify-center mb-1">
+                                        <svg class="w-4 h-4 text-orange-300 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-lg font-bold text-white">{{ $totalSaccos }}</p>
+                                    <p class="text-xs text-orange-200">SACCOs</p>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-center mb-1">
+                                        <svg class="w-4 h-4 text-indigo-300 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-lg font-bold text-white">{{ $totalRoutes ?? 0 }}</p>
+                                    <p class="text-xs text-indigo-200">Routes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Approvals Card -->
+                <div class="stat-card pending floating-animation" style="animation-delay: 0.4s;">
+                    <div class="p-4 relative z-10">
                         <div class="flex items-center">
                             <div class="icon-container">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-red-200">Pending Approvals</h3>
-                                <p class="text-3xl font-bold text-white">{{ $pendingDrivers }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card saccos floating-animation" style="animation-delay: 0.8s;">
-                    <div class="p-6 relative z-10">
-                        <div class="flex items-center">
-                            <div class="icon-container">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-purple-200">Total SACCOs</h3>
-                                <p class="text-3xl font-bold text-white">{{ $totalSaccos }}</p>
+                            <div class="ml-3">
+                                <h3 class="text-xs font-medium text-red-200">Pending Approvals</h3>
+                                <p class="text-2xl font-bold text-white">{{ $pendingDrivers }}</p>
                             </div>
                         </div>
                     </div>
@@ -615,20 +693,20 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 fade-in stagger-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 fade-in stagger-2">
                 <div class="action-card">
-                    <div class="p-8">
-                        <div class="text-center mb-6">
-                            <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-6">
+                        <div class="text-center mb-4">
+                            <div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-primary mb-2">Manage Users</h3>
-                            <p class="text-gray-600">View and manage all registered users on the platform</p>
+                            <h3 class="text-lg font-bold text-primary mb-2">Manage Users</h3>
+                            <p class="text-gray-600 text-sm">View and manage all registered users on the platform</p>
                         </div>
                         <a href="{{ route('admin.users.index') }}" class="btn-primary w-full">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                             </svg>
@@ -638,18 +716,18 @@
                 </div>
 
                 <div class="action-card">
-                    <div class="p-8">
-                        <div class="text-center mb-6">
-                            <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-6">
+                        <div class="text-center mb-4">
+                            <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-primary mb-2">Manage Drivers</h3>
-                            <p class="text-gray-600">Approve or reject driver applications and manage driver profiles</p>
+                            <h3 class="text-lg font-bold text-primary mb-2">Manage Drivers</h3>
+                            <p class="text-gray-600 text-sm">Approve or reject driver applications and manage driver profiles</p>
                         </div>
                         <a href="{{ route('admin.drivers.index') }}" class="btn-success w-full">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             Manage Drivers
@@ -658,18 +736,18 @@
                 </div>
 
                 <div class="action-card">
-                    <div class="p-8">
-                        <div class="text-center mb-6">
-                            <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-6">
+                        <div class="text-center mb-4">
+                            <div class="bg-yellow-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-primary mb-2">Manage SACCOs</h3>
-                            <p class="text-gray-600">Add and manage transportation cooperatives</p>
+                            <h3 class="text-lg font-bold text-primary mb-2">Manage SACCOs</h3>
+                            <p class="text-gray-600 text-sm">Add and manage transportation cooperatives</p>
                         </div>
                         <a href="{{ route('admin.saccos.index') }}" class="btn-secondary w-full">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
                             Manage SACCOs
@@ -678,18 +756,38 @@
                 </div>
 
                 <div class="action-card">
-                    <div class="p-8">
-                        <div class="text-center mb-6">
-                            <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-6">
+                        <div class="text-center mb-4">
+                            <div class="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-primary mb-2">Manage Routes</h3>
+                            <p class="text-gray-600 text-sm">Add and manage travel routes between locations</p>
+                        </div>
+                        <a href="{{ route('admin.routes.index') }}" class="btn-info w-full">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            Manage Routes
+                        </a>
+                    </div>
+                </div>
+
+                <div class="action-card">
+                    <div class="p-6">
+                        <div class="text-center mb-4">
+                            <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-primary mb-2">Trip Management</h3>
-                            <p class="text-gray-600">Create and manage trips for drivers</p>
+                            <h3 class="text-lg font-bold text-primary mb-2">Trip Management</h3>
+                            <p class="text-gray-600 text-sm">Create and manage trips for drivers</p>
                         </div>
                         <a href="{{ route('admin.trips.index') }}" class="btn-success w-full">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                             </svg>
                             Manage Trips
@@ -699,35 +797,35 @@
             </div>
 
             <!-- Additional Admin Tools -->
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 fade-in stagger-3">
-                <div class="dashboard-card text-center p-6 group cursor-pointer" onclick="window.location.href='{{ route('admin.bookings.index') }}'">
-                    <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 fade-in stagger-3">
+                <div class="dashboard-card text-center p-4 group cursor-pointer" onclick="window.location.href='{{ route('admin.bookings.index') }}'">
+                    <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                         </svg>
                     </div>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Bookings Management</h4>
-                    <p class="text-gray-600 text-sm">View and manage all passenger bookings</p>
+                    <h4 class="text-base font-semibold text-primary mb-2">Bookings Management</h4>
+                    <p class="text-gray-600 text-xs">View and manage all passenger bookings</p>
                 </div>
 
-                <div class="dashboard-card text-center p-6 group cursor-pointer" onclick="window.location.href='{{ route('admin.payments.index') }}'">
-                    <div class="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="dashboard-card text-center p-4 group cursor-pointer" onclick="window.location.href='{{ route('admin.payments.index') }}'">
+                    <div class="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v2a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </div>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Payments Management</h4>
-                    <p class="text-gray-600 text-sm">View and manage all payment transactions</p>
+                    <h4 class="text-base font-semibold text-primary mb-2">Payments Management</h4>
+                    <p class="text-gray-600 text-xs">View and manage all payment transactions</p>
                 </div>
 
-                <div class="dashboard-card text-center p-6 group cursor-pointer">
-                    <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="dashboard-card text-center p-4 group cursor-pointer">
+                    <div class="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                     </div>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Support Tickets</h4>
-                    <p class="text-gray-600 text-sm">Manage customer support requests</p>
+                    <h4 class="text-base font-semibold text-primary mb-2">Support Tickets</h4>
+                    <p class="text-gray-600 text-xs">Manage customer support requests</p>
                 </div>
             </div>
         </main>

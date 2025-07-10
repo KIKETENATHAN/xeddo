@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Trip;
 use App\Models\DriverProfile;
 use App\Models\Sacco;
+use App\Models\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,18 +28,16 @@ class TripController extends Controller
             ->where('is_available', true)
             ->get();
         
-        $saccos = Sacco::all();
+        $routes = Route::active()->orderBy('from_location')->orderBy('to_location')->get();
         
-        return view('admin.trips.create', compact('drivers', 'saccos'));
+        return view('admin.trips.create', compact('drivers', 'routes'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'driver_id' => 'required|exists:driver_profiles,id',
-            'sacco_id' => 'required|exists:saccos,id',
-            'from_location' => 'required|string|max:255',
-            'to_location' => 'required|string|max:255',
+            'route_id' => 'required|exists:routes,id',
             'departure_time' => 'required|date|after:now',
             'estimated_arrival_time' => 'required|date|after:departure_time',
             'amount' => 'required|numeric|min:0',
@@ -46,11 +45,16 @@ class TripController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
+        // Get the selected driver and route
+        $driver = DriverProfile::findOrFail($request->driver_id);
+        $route = Route::findOrFail($request->route_id);
+
         $trip = Trip::create([
             'driver_id' => $request->driver_id,
-            'sacco_id' => $request->sacco_id,
-            'from_location' => $request->from_location,
-            'to_location' => $request->to_location,
+            'sacco_id' => $driver->sacco_id, // Get SACCO from driver's profile
+            'route_id' => $request->route_id,
+            'from_location' => $route->from_location, // Auto-populate from route
+            'to_location' => $route->to_location, // Auto-populate from route
             'departure_time' => $request->departure_time,
             'estimated_arrival_time' => $request->estimated_arrival_time,
             'amount' => $request->amount,
@@ -76,18 +80,16 @@ class TripController extends Controller
             ->where('status', 'approved')
             ->get();
         
-        $saccos = Sacco::all();
+        $routes = Route::active()->orderBy('from_location')->orderBy('to_location')->get();
         
-        return view('admin.trips.edit', compact('trip', 'drivers', 'saccos'));
+        return view('admin.trips.edit', compact('trip', 'drivers', 'routes'));
     }
 
     public function update(Request $request, Trip $trip)
     {
         $request->validate([
             'driver_id' => 'required|exists:driver_profiles,id',
-            'sacco_id' => 'required|exists:saccos,id',
-            'from_location' => 'required|string|max:255',
-            'to_location' => 'required|string|max:255',
+            'route_id' => 'required|exists:routes,id',
             'departure_time' => 'required|date',
             'estimated_arrival_time' => 'required|date|after:departure_time',
             'amount' => 'required|numeric|min:0',
@@ -96,7 +98,23 @@ class TripController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        $trip->update($request->all());
+        // Get the selected driver and route
+        $driver = DriverProfile::findOrFail($request->driver_id);
+        $route = Route::findOrFail($request->route_id);
+
+        $trip->update([
+            'driver_id' => $request->driver_id,
+            'sacco_id' => $driver->sacco_id, // Update SACCO from driver's profile
+            'route_id' => $request->route_id,
+            'from_location' => $route->from_location, // Update from route
+            'to_location' => $route->to_location, // Update from route
+            'departure_time' => $request->departure_time,
+            'estimated_arrival_time' => $request->estimated_arrival_time,
+            'amount' => $request->amount,
+            'available_seats' => $request->available_seats,
+            'status' => $request->status,
+            'notes' => $request->notes,
+        ]);
 
         return redirect()->route('admin.trips.index')
             ->with('success', 'Trip updated successfully!');
@@ -126,6 +144,17 @@ class TripController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Trip status updated successfully!'
+        ]);
+    }
+
+    public function getRouteDetails(Route $route)
+    {
+        return response()->json([
+            'from_location' => $route->from_location,
+            'to_location' => $route->to_location,
+            'estimated_fare' => $route->estimated_fare,
+            'estimated_duration_minutes' => $route->estimated_duration_minutes,
+            'description' => $route->description,
         ]);
     }
 }
