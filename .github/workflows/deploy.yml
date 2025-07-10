@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: xeddo/
           local-dir: ./xeddo/
-          dangerous-clean-slate: true
+          dangerous-clean-slate: false
           log-level: verbose
           exclude: |
             **/.git*
