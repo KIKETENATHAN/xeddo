@@ -7,12 +7,20 @@
 
         <title>{{ config('app.name', 'Xeddo Travel Link') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
+        <!-- Additional Assets -->
+        <link rel="stylesheet" href="{{ asset('build/assets/app-ogBwu_Df.css') }}">
+        <script type="module" src="{{ asset('build/assets/app-DaBYqt0m.js') }}"></script>
         
         <style>
             :root {
@@ -167,13 +175,9 @@
     <body class="font-sans text-gray-900 antialiased auth-bg">
         <div class="min-h-screen flex flex-col justify-center items-center py-1 px-1">
             <div class="text-center mb-3">
-                <div class="logo-container">
-                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
+                <div class="logo-container mb-3">
+                    <x-application-logo type="full" size="large" class="mx-auto" />
                 </div>
-                <h1 class="text-lg font-bold text-primary mb-1">Xeddo Travel Link</h1>
                 <p class="text-gray-600 text-xs">Your premium ride-sharing platform</p>
             </div>
 

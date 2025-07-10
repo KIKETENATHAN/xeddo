@@ -4,8 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Passenger Dashboard - Xeddo</title>
+    <title>Passenger Dashboard - Xeddo Travel Link</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Additional Assets -->
+    <link rel="stylesheet" href="{{ asset('build/assets/app-ogBwu_Df.css') }}">
+    <script type="module" src="{{ asset('build/assets/app-DaBYqt0m.js') }}"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -407,12 +416,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <div class="gradient-navy rounded-lg p-2 mr-3">
-                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                        </div>
+                        <x-application-logo type="icon" size="small" class="mr-3" />
                         <h1 class="text-xl font-bold text-primary">Passenger Dashboard</h1>
                     </div>
                     <!-- Mobile menu button -->

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SaccoController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Driver\DashboardController as DriverDashboardController;
 use App\Http\Controllers\Driver\TripController;
 use App\Http\Controllers\Passenger\DashboardController as PassengerDashboardController;
@@ -78,6 +79,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Trip management routes
     Route::resource('trips', \App\Http\Controllers\Admin\TripController::class);
     Route::patch('/trips/{trip}/status', [\App\Http\Controllers\Admin\TripController::class, 'updateStatus'])->name('trips.update-status');
+    
+    // Booking management routes
+    Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->only(['index', 'show']);
+    Route::patch('/bookings/{booking}/status', [\App\Http\Controllers\Admin\BookingController::class, 'updateStatus'])->name('bookings.update-status');
+    Route::patch('/bookings/{booking}/cancel', [\App\Http\Controllers\Admin\BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::get('/bookings/analytics', [\App\Http\Controllers\Admin\BookingController::class, 'analytics'])->name('bookings.analytics');
+    Route::get('/bookings/export', [\App\Http\Controllers\Admin\BookingController::class, 'export'])->name('bookings.export');
+    
+    // Payment management routes
+    Route::get('/payments/analytics', [AdminPaymentController::class, 'analytics'])->name('payments.analytics');
+    Route::get('/payments/export', [AdminPaymentController::class, 'export'])->name('payments.export');
+    Route::resource('payments', AdminPaymentController::class)->only(['index', 'show']);
+    Route::patch('/payments/{payment}/status', [AdminPaymentController::class, 'updateStatus'])->name('payments.update-status');
+    Route::patch('/payments/{payment}/refund', [AdminPaymentController::class, 'refund'])->name('payments.refund');
 });
 
 // Driver routes

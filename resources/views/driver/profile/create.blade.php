@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Complete Driver Profile - Xeddo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Additional Assets -->
+    <link rel="stylesheet" href="{{ asset('build/assets/app-ogBwu_Df.css') }}">
+    <script type="module" src="{{ asset('build/assets/app-DaBYqt0m.js') }}"></script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900">
     <div class="min-h-screen flex items-center justify-center">

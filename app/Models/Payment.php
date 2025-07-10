@@ -34,6 +34,11 @@ class Payment extends Model
         return $this->belongsTo(Booking::class);
     }
 
+    public function user()
+    {
+        return $this->hasOneThrough(User::class, Booking::class, 'id', 'id', 'booking_id', 'user_id');
+    }
+
     // Generate unique payment reference
     public static function generatePaymentReference()
     {

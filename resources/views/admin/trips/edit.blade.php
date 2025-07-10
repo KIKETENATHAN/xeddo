@@ -6,6 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edit Trip - Admin Dashboard</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Additional Assets -->
+    <link rel="stylesheet" href="{{ asset('build/assets/app-ogBwu_Df.css') }}">
+    <script type="module" src="{{ asset('build/assets/app-DaBYqt0m.js') }}"></script>
     <style>
         :root {
             --primary-navy: #1e3a8a;

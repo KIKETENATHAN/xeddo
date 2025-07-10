@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit Driver Profile - Xeddo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Additional Assets -->
+    <link rel="stylesheet" href="{{ asset('build/assets/app-ogBwu_Df.css') }}">
+    <script type="module" src="{{ asset('build/assets/app-DaBYqt0m.js') }}"></script>
     <style>
         :root {
             --primary-navy: #1e3a8a;
