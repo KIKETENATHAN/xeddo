@@ -89,4 +89,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(PassengerProfile::class);
     }
+
+    /**
+     * Get the bookings associated with the user.
+     */
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

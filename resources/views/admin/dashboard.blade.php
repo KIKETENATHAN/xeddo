@@ -7,8 +7,8 @@
     <title>Admin Dashboard - Xeddo Travel Link</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/logo.jpg') }}">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -718,6 +718,26 @@
                 <div class="action-card">
                     <div class="p-6">
                         <div class="text-center mb-4">
+                            <div class="bg-teal-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-primary mb-2">Manage Passengers</h3>
+                            <p class="text-gray-600 text-sm">View, manage and add passenger information</p>
+                        </div>
+                        <a href="{{ route('admin.passengers.index') }}" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors w-full inline-block text-center">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Manage Passengers
+                        </a>
+                    </div>
+                </div>
+
+                <div class="action-card">
+                    <div class="p-6">
+                        <div class="text-center mb-4">
                             <div class="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
                                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -731,6 +751,26 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             Manage Drivers
+                        </a>
+                    </div>
+                </div>
+
+                <div class="action-card">
+                    <div class="p-6">
+                        <div class="text-center mb-4">
+                            <div class="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-primary mb-2">Vehicle Management</h3>
+                            <p class="text-gray-600 text-sm">View and manage all registered vehicles and their details</p>
+                        </div>
+                        <a href="{{ route('admin.vehicles.index') }}" class="btn-info w-full">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            Manage Vehicles
                         </a>
                     </div>
                 </div>

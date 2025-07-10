@@ -76,6 +76,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // SACCO management routes
     Route::resource('saccos', SaccoController::class);
     
+    // Vehicle management routes
+    Route::resource('vehicles', \App\Http\Controllers\Admin\VehicleController::class);
+    Route::get('/vehicles/export', [\App\Http\Controllers\Admin\VehicleController::class, 'export'])->name('vehicles.export');
+    Route::get('/vehicles/plate-numbers', [\App\Http\Controllers\Admin\VehicleController::class, 'getPlateNumbers'])->name('vehicles.plate-numbers');
+    Route::get('/vehicles/data', [\App\Http\Controllers\Admin\VehicleController::class, 'getVehicleData'])->name('vehicles.data');
+    
     // Trip management routes
     Route::resource('trips', \App\Http\Controllers\Admin\TripController::class);
     Route::patch('/trips/{trip}/status', [\App\Http\Controllers\Admin\TripController::class, 'updateStatus'])->name('trips.update-status');
@@ -98,7 +104,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('payments', AdminPaymentController::class)->only(['index', 'show']);
     Route::patch('/payments/{payment}/status', [AdminPaymentController::class, 'updateStatus'])->name('payments.update-status');
     Route::patch('/payments/{payment}/refund', [AdminPaymentController::class, 'refund'])->name('payments.refund');
+    
+    // Passenger management routes
+    Route::get('/passengers/export', [\App\Http\Controllers\Admin\PassengerController::class, 'export'])->name('passengers.export');
+    Route::get('/passengers/export-pdf', [\App\Http\Controllers\Admin\PassengerController::class, 'exportPdf'])->name('passengers.export-pdf');
+    Route::resource('passengers', \App\Http\Controllers\Admin\PassengerController::class);
 });
+
+// Public vehicle plate numbers route for drivers
+Route::get('/api/vehicle-plates', [\App\Http\Controllers\Admin\VehicleController::class, 'getPlateNumbers'])
+    ->middleware('auth')
+    ->name('api.vehicle-plates');
 
 // Driver routes
 Route::middleware(['auth', 'role:driver'])->prefix('driver')->name('driver.')->group(function () {

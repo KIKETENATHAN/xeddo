@@ -95,6 +95,13 @@ class DashboardController extends Controller
     {
         $driverProfile = Auth::user()->driverProfile;
         
+        // Determine which plate number to use
+        $plateNumber = $request->filled('existing_vehicle_plate_number') && $request->existing_vehicle_plate_number
+            ? $request->existing_vehicle_plate_number 
+            : $request->vehicle_plate_number;
+            
+        $request->merge(['vehicle_plate_number' => $plateNumber]);
+        
         $request->validate([
             'license_number' => 'required|string|unique:driver_profiles,license_number,' . $driverProfile->id,
             'license_expiry' => 'required|date|after:today',

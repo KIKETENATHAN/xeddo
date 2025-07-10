@@ -8,8 +8,8 @@
         <title>{{ config('app.name', 'Xeddo Travel Link') }}</title>
 
         <!-- Favicon -->
-        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+        <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpg') }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('images/logo.jpg') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

@@ -7,8 +7,8 @@
     <title>Passenger Dashboard - Xeddo Travel Link</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/logo.jpg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/logo.jpg') }}">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -397,6 +397,145 @@
             transform: translateY(0);
         }
 
+        /* Seat Selection Styles */
+        .vehicle-layout {
+            max-width: 300px;
+            margin: 0 auto;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .driver-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .driver-seat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #6b7280;
+            color: white;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .passenger-seats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .seat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .aisle {
+            width: 20px;
+            height: 2px;
+            background: #e2e8f0;
+            position: relative;
+        }
+
+        .aisle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: #9ca3af;
+            border-radius: 50%;
+        }
+
+        .seat {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+
+        .seat.available {
+            background: #22c55e;
+            color: white;
+        }
+
+        .seat.available:hover {
+            background: #16a34a;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .seat.occupied {
+            background: #ef4444;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .seat.selected {
+            background: #f59e0b;
+            color: white;
+            border-color: #d97706;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .seat.small {
+            width: 20px;
+            height: 20px;
+            font-size: 10px;
+        }
+
+        .seat-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .selected-seats-display {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 15px;
+        }
+
         @media (max-width: 768px) {
             .trip-table {
                 font-size: 0.875rem;
@@ -573,35 +712,35 @@
                                 <div>
                                     <label for="pickup" class="block text-sm font-semibold text-primary mb-2">Pickup Location</label>
                                     <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <input type="text" id="pickup" name="pickup" value="{{ old('pickup', $searchParams['pickup'] ?? '') }}" class="form-input w-full pr-10" placeholder="Enter pickup location" required>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
                                         </div>
-                                        <input type="text" id="pickup" name="pickup" value="{{ old('pickup', $searchParams['pickup'] ?? '') }}" class="form-input w-full pl-10" placeholder="Enter pickup location" required>
                                     </div>
                                 </div>
                                 <div>
                                     <label for="destination" class="block text-sm font-semibold text-primary mb-2">Destination</label>
                                     <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <input type="text" id="destination" name="destination" value="{{ old('destination', $searchParams['destination'] ?? '') }}" class="form-input w-full pr-10" placeholder="Enter destination" required>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
                                             </svg>
                                         </div>
-                                        <input type="text" id="destination" name="destination" value="{{ old('destination', $searchParams['destination'] ?? '') }}" class="form-input w-full pl-10" placeholder="Enter destination" required>
                                     </div>
                                 </div>
                                 <div>
                                     <label for="travel_time" class="block text-sm font-semibold text-primary mb-2">Travel Time</label>
                                     <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <input type="datetime-local" id="travel_time" name="travel_time" value="{{ old('travel_time', $searchParams['travel_time'] ?? '') }}" class="form-input w-full pr-10" required>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                         </div>
-                                        <input type="datetime-local" id="travel_time" name="travel_time" value="{{ old('travel_time', $searchParams['travel_time'] ?? '') }}" class="form-input w-full pl-10" required>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn-secondary">
@@ -825,6 +964,90 @@
                                 <option value="3">3 Seats</option>
                                 <option value="4">4 Seats</option>
                             </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-2">Select Your Seat(s)</label>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="vehicle-layout">
+                                    <!-- Driver Section -->
+                                    <div class="driver-section mb-4">
+                                        <div class="driver-seat">
+                                            <svg class="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                                            </svg>
+                                            <span class="text-xs">Driver</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Passenger Seats -->
+                                    <div class="passenger-seats">
+                                        <!-- Row 1: 2 seats -->
+                                        <div class="seat-row">
+                                            <div class="seat available" data-seat="1">1</div>
+                                            <div class="aisle"></div>
+                                            <div class="seat available" data-seat="2">2</div>
+                                        </div>
+                                        
+                                        <!-- Row 2: 2 seats -->
+                                        <div class="seat-row">
+                                            <div class="seat available" data-seat="3">3</div>
+                                            <div class="aisle"></div>
+                                            <div class="seat available" data-seat="4">4</div>
+                                        </div>
+                                        
+                                        <!-- Row 3: 2 seats -->
+                                        <div class="seat-row">
+                                            <div class="seat available" data-seat="5">5</div>
+                                            <div class="aisle"></div>
+                                            <div class="seat available" data-seat="6">6</div>
+                                        </div>
+                                        
+                                        <!-- Row 4: 2 seats -->
+                                        <div class="seat-row">
+                                            <div class="seat available" data-seat="7">7</div>
+                                            <div class="aisle"></div>
+                                            <div class="seat available" data-seat="8">8</div>
+                                        </div>
+                                        
+                                        <!-- Row 5: 3 seats -->
+                                        <div class="seat-row">
+                                            <div class="seat available" data-seat="9">9</div>
+                                            <div class="seat available" data-seat="10">10</div>
+                                            <div class="seat available" data-seat="11">11</div>
+                                        </div>
+                                        
+                                        <!-- Row 6: 3 seats -->
+                                        <div class="seat-row">
+                                            <div class="seat available" data-seat="12">12</div>
+                                            <div class="seat available" data-seat="13">13</div>
+                                            <div class="seat available" data-seat="14">14</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Seat Legend -->
+                                <div class="seat-legend mt-4">
+                                    <div class="legend-item">
+                                        <div class="seat available small"></div>
+                                        <span>Available</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="seat occupied small"></div>
+                                        <span>Occupied</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="seat selected small"></div>
+                                        <span>Your Selection</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Selected Seats Display -->
+                                <div class="selected-seats-display mt-4">
+                                    <p class="text-sm font-medium text-primary">Selected Seats: <span id="selectedSeatsText">None</span></p>
+                                    <input type="hidden" id="selectedSeats" name="selected_seats" value="">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -1175,6 +1398,102 @@
             window.print();
         }
 
+        // Seat selection functionality
+        let selectedSeats = [];
+        let maxSeats = 1;
+
+        // Initialize seat selection
+        function initializeSeatSelection() {
+            const seats = document.querySelectorAll('.seat.available');
+            const seatsCountSelect = document.getElementById('seatsCount');
+            const selectedSeatsInput = document.getElementById('selectedSeats');
+            const selectedSeatsDisplay = document.getElementById('selectedSeatsText');
+
+            // Update max seats when dropdown changes
+            seatsCountSelect.addEventListener('change', function() {
+                maxSeats = parseInt(this.value);
+                // Clear selections if exceeding new limit
+                if (selectedSeats.length > maxSeats) {
+                    selectedSeats = selectedSeats.slice(0, maxSeats);
+                    updateSeatDisplay();
+                }
+            });
+
+            // Handle seat clicks
+            seats.forEach(seat => {
+                seat.addEventListener('click', function() {
+                    const seatNumber = this.getAttribute('data-seat');
+                    
+                    if (this.classList.contains('occupied')) {
+                        return; // Can't select occupied seats
+                    }
+
+                    if (this.classList.contains('selected')) {
+                        // Deselect seat
+                        const index = selectedSeats.indexOf(seatNumber);
+                        if (index > -1) {
+                            selectedSeats.splice(index, 1);
+                        }
+                        this.classList.remove('selected');
+                        this.classList.add('available');
+                    } else {
+                        // Select seat
+                        if (selectedSeats.length < maxSeats) {
+                            selectedSeats.push(seatNumber);
+                            this.classList.remove('available');
+                            this.classList.add('selected');
+                        } else {
+                            // Show message if trying to select too many seats
+                            alert(`You can only select ${maxSeats} seat(s). Please deselect a seat first.`);
+                        }
+                    }
+
+                    updateSeatDisplay();
+                });
+            });
+
+            function updateSeatDisplay() {
+                if (selectedSeats.length === 0) {
+                    selectedSeatsDisplay.textContent = 'None';
+                    selectedSeatsInput.value = '';
+                } else {
+                    selectedSeatsDisplay.textContent = selectedSeats.sort((a, b) => parseInt(a) - parseInt(b)).join(', ');
+                    selectedSeatsInput.value = selectedSeats.join(',');
+                }
+            }
+        }
+
+        // Form validation enhancement
+        function validateBookingForm() {
+            const selectedSeatsInput = document.getElementById('selectedSeats');
+            const seatsCount = parseInt(document.getElementById('seatsCount').value);
+            
+            if (!selectedSeatsInput.value || selectedSeats.length === 0) {
+                alert('Please select your seat(s) before booking.');
+                return false;
+            }
+            
+            if (selectedSeats.length !== seatsCount) {
+                alert(`Please select exactly ${seatsCount} seat(s).`);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Add form validation to booking form submit
+        function enhanceBookingForm() {
+            const bookingForm = document.querySelector('#bookingForm form');
+            if (bookingForm) {
+                bookingForm.addEventListener('submit', function(e) {
+                    if (!validateBookingForm()) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+        }
+
         // Debug scrolling issue
         console.log('Page height:', document.body.scrollHeight);
         console.log('Viewport height:', window.innerHeight);
@@ -1229,6 +1548,10 @@
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
                 travelTimeInput.min = now.toISOString().slice(0, 16);
             }
+
+            // Initialize seat selection functionality
+            initializeSeatSelection();
+            enhanceBookingForm();
         });
     </script>
 </body>

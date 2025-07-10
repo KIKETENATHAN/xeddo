@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Edit Driver Profile - Xeddo</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
@@ -318,10 +319,36 @@
                                 <label for="vehicle_plate_number" class="block text-sm font-medium text-gray-700 mb-2">
                                     License Plate Number *
                                 </label>
-                                <input type="text" id="vehicle_plate_number" name="vehicle_plate_number" 
-                                       value="{{ old('vehicle_plate_number', $driverProfile->vehicle_plate_number) }}" 
-                                       class="form-input" placeholder="e.g., KAA 123A" required>
+                                <div class="space-y-2">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="radio" id="existing_plate" name="plate_option" value="existing" 
+                                               class="text-blue-600 focus:ring-blue-500">
+                                        <label for="existing_plate" class="text-sm text-gray-700">Select from existing plates</label>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="radio" id="new_plate" name="plate_option" value="new" checked
+                                               class="text-blue-600 focus:ring-blue-500">
+                                        <label for="new_plate" class="text-sm text-gray-700">Enter new plate number</label>
+                                    </div>
+                                </div>
+                                
+                                <div id="existing_plate_dropdown" class="mt-2 hidden">
+                                    <select id="existing_vehicle_plate_number" name="existing_vehicle_plate_number" 
+                                            class="form-select">
+                                        <option value="">Select existing plate number...</option>
+                                    </select>
+                                </div>
+                                
+                                <div id="new_plate_input" class="mt-2">
+                                    <input type="text" id="vehicle_plate_number" name="vehicle_plate_number" 
+                                           value="{{ old('vehicle_plate_number', $driverProfile->vehicle_plate_number) }}" 
+                                           class="form-input" placeholder="e.g., KAA 123A" required>
+                                </div>
+                                
                                 @error('vehicle_plate_number')
+                                    <div class="error-message">{{ $message }}</div>
+                                @enderror
+                                @error('existing_vehicle_plate_number')
                                     <div class="error-message">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -369,5 +396,93 @@
             </div>
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const existingPlateRadio = document.getElementById('existing_plate');
+            const newPlateRadio = document.getElementById('new_plate');
+            const existingPlateDropdown = document.getElementById('existing_plate_dropdown');
+            const newPlateInput = document.getElementById('new_plate_input');
+            const existingPlateSelect = document.getElementById('existing_vehicle_plate_number');
+            const newPlateTextInput = document.getElementById('vehicle_plate_number');
+            let vehiclePlates = [];
+
+            // Function to toggle between radio options
+            function togglePlateOptions() {
+                if (existingPlateRadio.checked) {
+                    existingPlateDropdown.classList.remove('hidden');
+                    newPlateInput.classList.add('hidden');
+                    newPlateTextInput.required = false;
+                    existingPlateSelect.required = true;
+                    
+                    // Load vehicle plates if not already loaded
+                    if (vehiclePlates.length === 0) {
+                        loadVehiclePlates();
+                    }
+                } else {
+                    existingPlateDropdown.classList.add('hidden');
+                    newPlateInput.classList.remove('hidden');
+                    newPlateTextInput.required = true;
+                    existingPlateSelect.required = false;
+                }
+            }
+
+            // Function to load vehicle plates from the server
+            function loadVehiclePlates() {
+                fetch('{{ route("api.vehicle-plates") }}', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        vehiclePlates = data.plate_numbers;
+                        populateDropdown();
+                    } else {
+                        console.error('Failed to load vehicle plates');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading vehicle plates:', error);
+                });
+            }
+
+            // Function to populate the dropdown with vehicle plates
+            function populateDropdown() {
+                existingPlateSelect.innerHTML = '<option value="">Select existing plate number...</option>';
+                
+                Object.entries(vehiclePlates).forEach(([id, plateNumber]) => {
+                    const option = document.createElement('option');
+                    option.value = plateNumber;
+                    option.textContent = plateNumber;
+                    existingPlateSelect.appendChild(option);
+                });
+            }
+
+            // Handle radio button changes
+            existingPlateRadio.addEventListener('change', togglePlateOptions);
+            newPlateRadio.addEventListener('change', togglePlateOptions);
+
+            // Handle dropdown selection
+            existingPlateSelect.addEventListener('change', function() {
+                if (this.value) {
+                    newPlateTextInput.value = this.value;
+                }
+            });
+
+            // Initialize the form state
+            togglePlateOptions();
+
+            // Form submission handling
+            document.querySelector('form').addEventListener('submit', function(e) {
+                if (existingPlateRadio.checked && existingPlateSelect.value) {
+                    newPlateTextInput.value = existingPlateSelect.value;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
